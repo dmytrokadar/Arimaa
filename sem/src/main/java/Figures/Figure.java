@@ -3,14 +3,37 @@ package Figures;
 import javax.swing.text.Position;
 
 public abstract class Figure {
+
+    public interface STRENGTH {
+        int RABBIT = 0;
+        int CAT = 1;
+        int DOG = 1;
+        int HORSE = 2;
+        int CAMEL = 2;
+        int ELEPHANT = 3;
+    }
+
+    public enum TYPE {
+        RABBIT,
+        CAT,
+        DOG,
+        HORSE,
+        CAMEL,
+        ELEPHANT
+    }
+
     private String color;
     private int positionX;
     private int positionY;
+    protected TYPE type;
+    private int strength;
+    private boolean isFrozen;
 
     public Figure(String color, int positionX, int positionY) {
         this.color = color;
         this.positionX = positionX;
         this.positionY = positionY;
+        isFrozen = false;
     }
 
     public Figure(String color) {
@@ -28,6 +51,8 @@ public abstract class Figure {
         }
     }
 
+
+
     public int getPositionX() {
         return positionX;
     }
@@ -38,5 +63,9 @@ public abstract class Figure {
 
     public String getColor() {
         return color;
+    }
+
+    public boolean isFrozen() {
+        return isFrozen;
     }
 }
