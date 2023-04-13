@@ -4,6 +4,10 @@ import javax.swing.text.Position;
 
 public abstract class Figure {
 
+    /*
+    * Abstract class for all figures
+    * */
+
     public interface STRENGTH {
         int RABBIT = 0;
         int CAT = 1;

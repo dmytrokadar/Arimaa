@@ -1,4 +1,4 @@
-package Board;
+package Logic;
 
 public class Board {
     public enum Color{
