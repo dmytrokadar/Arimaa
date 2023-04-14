@@ -1,5 +1,7 @@
 package MainWindow;
 
+import Graphics.GameSettingsWindow;
+
 import javax.swing.*;
 
 public class MainWindow extends JFrame {
@@ -15,5 +17,6 @@ public class MainWindow extends JFrame {
 //        pack();
 //        setLocationRelativeTo(null);
 //        setVisible(true);
+        GameSettingsWindow settingsWindow = new GameSettingsWindow();
     }
 }
