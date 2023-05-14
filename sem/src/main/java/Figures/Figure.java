@@ -1,5 +1,7 @@
 package Figures;
 
+import Logic.Board;
+
 import javax.swing.text.Position;
 
 public abstract class Figure {
@@ -26,21 +28,21 @@ public abstract class Figure {
         ELEPHANT
     }
 
-    private String color;
+    private Board.Color color;
     private int positionX;
     private int positionY;
     protected TYPE type;
     private int strength;
     private boolean isFrozen;
 
-    public Figure(String color, int positionX, int positionY) {
+    public Figure(Board.Color color, int positionX, int positionY) {
         this.color = color;
         this.positionX = positionX;
         this.positionY = positionY;
         isFrozen = false;
     }
 
-    public Figure(String color) {
+    public Figure(Board.Color color) {
         this.color = color;
     }
 
@@ -65,7 +67,7 @@ public abstract class Figure {
         return positionY;
     }
 
-    public String getColor() {
+    public Board.Color getColor() {
         return color;
     }
 

@@ -1,12 +1,14 @@
 package Figures;
 
+import Logic.Board;
+
 public class Dog extends Figure{
-    public Dog(String color, int positionX, int positionY) {
+    public Dog(Board.Color color, int positionX, int positionY) {
         super(color, positionX, positionY);
         type = TYPE.DOG;
     }
 
-    public Dog(String color) {
+    public Dog(Board.Color color) {
         super(color);
         type = TYPE.DOG;
     }
