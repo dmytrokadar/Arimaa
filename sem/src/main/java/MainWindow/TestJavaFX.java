@@ -28,7 +28,10 @@ public class TestJavaFX extends Application{
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
+                Scene scene = new Scene(createBoard());
+                stage.setScene(scene);
+                stage.setTitle("Arimaa");
+                stage.show();
             }
         });
 
@@ -49,12 +52,12 @@ public class TestJavaFX extends Application{
 //        root.setVgap(10);
 
 //        root.setPadding(new Insets(0, 10, 0, 10));
-//        root.add(newGame, 1, 1);
-//        root.add(exit, 1, 2);
+        root.add(newGame, 1, 1);
+        root.add(exit, 1, 2);
 //        root.add(rectangle, 0, 0);
 
-//        Scene scene = new Scene(root, 600,400);
-        Scene scene = new Scene(createBoard());
+        Scene scene = new Scene(root, 600,400);
+//        Scene scene = new Scene(createBoard());
 
         stage.setScene(scene);
         stage.setTitle("Arimaa");
