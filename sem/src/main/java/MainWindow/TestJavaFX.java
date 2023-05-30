@@ -1,12 +1,16 @@
 package MainWindow;
+import Logic.Board;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -22,6 +26,8 @@ public class TestJavaFX extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
+        Board board = new Board();
+
         Button newGame = new Button("New Game");
         Button exit = new Button("Exit");
 
@@ -66,6 +72,7 @@ public class TestJavaFX extends Application{
 
     GridPane createBoard(){
         GridPane gp = new GridPane();
+        Image im = new Image("Textures/camel_g.png");
 
         for (int i = 0; i < SIDE_SIZE; i++){
             for (int j = 0; j < SIDE_SIZE; j++){
@@ -74,9 +81,14 @@ public class TestJavaFX extends Application{
                     r.setFill(Color.GREEN);
                 }
                 r.setStroke(Color.BLACK);
+                //TODO mb j i i pominyaty mistamy
                 gp.add(r, i, j);
             }
         }
+                gp.getChildren().add(new ImageView(im));
+                gp.getChildren().add(new ImageView(im));
+
+
 
         return gp;
     }
