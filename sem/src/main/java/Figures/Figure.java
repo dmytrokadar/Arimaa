@@ -10,13 +10,23 @@ public abstract class Figure {
     * Abstract class for all figures
     * */
 
-    public interface STRENGTH {
-        int RABBIT = 0;
-        int CAT = 1;
-        int DOG = 1;
-        int HORSE = 2;
-        int CAMEL = 2;
-        int ELEPHANT = 3;
+    public enum STRENGTH {
+        RABBIT(0),
+        CAT(1),
+        DOG(1),
+        HORSE(2),
+        CAMEL(2),
+        ELEPHANT(3);
+
+        private final int value;
+
+        STRENGTH(int value){
+            this.value = value;
+        }
+
+        private int getValue(){
+            return value;
+        }
     }
 
     public enum TYPE {
@@ -28,11 +38,11 @@ public abstract class Figure {
         ELEPHANT
     }
 
-    private Board.Color color;
+    private static Board.Color color;
     private int positionX;
     private int positionY;
-    protected TYPE type;
-    private int strength;
+    protected static TYPE type;
+    protected static STRENGTH strength;
     private boolean isFrozen;
 
     public Figure(Board.Color color, int positionX, int positionY) {
