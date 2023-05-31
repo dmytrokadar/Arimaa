@@ -1,5 +1,7 @@
 package MainWindow;
+import Graphics.Tile;
 import Logic.Board;
+import Utilities.Timer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -70,9 +73,23 @@ public class TestJavaFX extends Application{
         stage.show();
     }
 
+    private EventHandler<DragEvent> onDragOver = e -> {
+        if(e.getSource() != e.getGestureSource()){
+            e.acceptTransferModes(TransferMode.ANY);
+            System.out.println("dragged to tile");
+        }
+
+        e.consume();
+    };
+
+    private EventHandler<DragEvent> onDragDone = e -> {
+        ((Tile)e.getSource()).removeFigure();
+    };
+
     GridPane createBoard(){
         GridPane gp = new GridPane();
-        Image im = new Image("Textures/camel_g.png");
+        final Image im = new Image("Textures/camel_g.png");
+        final ImageView imageView = new ImageView(im);
 
         for (int i = 0; i < SIDE_SIZE; i++){
             for (int j = 0; j < SIDE_SIZE; j++){
@@ -81,12 +98,66 @@ public class TestJavaFX extends Application{
                     r.setFill(Color.GREEN);
                 }
                 r.setStroke(Color.BLACK);
+//                r.setOnDragOver(onDragOver);
+                Tile t = new Tile(r, j, i);
+                t.setOnDragOver(onDragOver);
+                t.setOnDragDropped(new EventHandler<DragEvent>() {
+                    @Override
+                    public void handle(DragEvent dragEvent) {
+                        Dragboard db = dragEvent.getDragboard();
+                        System.out.println("exit drag");
+                        t.setFigureView((ImageView) dragEvent.getGestureSource());
+//                        t.setFigureView((new ImageView(db.getImage())));
+
+                        dragEvent.setDropCompleted(true);
+
+                        dragEvent.consume();
+                    }
+                });
+                t.setOnDragDone(onDragDone);
                 //TODO mb j i i pominyaty mistamy
-                gp.add(r, i, j);
+                gp.add(t, j, i);
             }
         }
-                gp.getChildren().add(new ImageView(im));
-                gp.getChildren().add(new ImageView(im));
+
+        imageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            // inspiration https://docs.oracle.com/javafx/2/drag_drop/jfxpub-drag_drop.htm
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Dragboard db = imageView.startDragAndDrop(TransferMode.MOVE);
+                System.out.println("enter drag");
+
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(imageView.getImage());
+                db.setContent(content);
+
+                mouseEvent.consume();
+            }
+        });
+
+        imageView.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+                Dragboard db = dragEvent.getDragboard();
+                System.out.println("exit drag");
+
+
+
+                dragEvent.setDropCompleted(true);
+
+                dragEvent.consume();
+            }
+        });
+
+        imageView.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+//                imageView.setImage(null);
+            }
+        });
+
+        gp.getChildren().add(imageView);
+//        gp.getChildren().add(new ImageView(im));
 
 
 
