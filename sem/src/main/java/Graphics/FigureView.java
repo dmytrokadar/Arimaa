@@ -28,4 +28,24 @@ public class FigureView extends ImageView {
         this.posY = posY;
         this.figure = figure;
     }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public Figure getFigure() {
+        return figure;
+    }
 }

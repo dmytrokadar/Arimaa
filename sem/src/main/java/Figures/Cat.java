@@ -7,11 +7,13 @@ public class Cat extends Figure{
         super(color, positionX, positionY);
         type = TYPE.CAT;
         strength = STRENGTH.CAT;
+        this.color = color;
     }
 
     public Cat(Board.Color color) {
         super(color);
         type = TYPE.CAT;
         strength = STRENGTH.CAT;
+        this.color = color;
     }
 }

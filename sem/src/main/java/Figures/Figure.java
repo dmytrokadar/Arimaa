@@ -38,7 +38,7 @@ public abstract class Figure {
         ELEPHANT
     }
 
-    private static Board.Color color;
+    protected static Board.Color color;
     private int positionX;
     private int positionY;
     protected static TYPE type;

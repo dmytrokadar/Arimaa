@@ -7,11 +7,13 @@ public class Elephant extends Figure{
         super(color, positionX, positionY);
         type = TYPE.ELEPHANT;
         strength = STRENGTH.ELEPHANT;
+        this.color = color;
     }
 
     public Elephant(Board.Color color) {
         super(color);
         type = TYPE.ELEPHANT;
         strength = STRENGTH.ELEPHANT;
+        this.color = color;
     }
 }

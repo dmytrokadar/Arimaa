@@ -32,5 +32,15 @@ public class Tile extends Pane{
         figureView = null;
     }
 
+    public FigureView getFigureView() {
+        return figureView;
+    }
 
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
 }

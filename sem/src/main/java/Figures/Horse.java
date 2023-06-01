@@ -7,11 +7,13 @@ public class Horse extends Figure{
         super(color, positionX, positionY);
         type = TYPE.HORSE;
         strength = STRENGTH.HORSE;
+        this.color = color;
     }
 
     public Horse(Board.Color color) {
         super(color);
         type = TYPE.HORSE;
         strength = STRENGTH.HORSE;
+        this.color = color;
     }
 }

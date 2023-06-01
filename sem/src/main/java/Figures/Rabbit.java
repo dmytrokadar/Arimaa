@@ -7,11 +7,13 @@ public class Rabbit extends Figure{
         super(color, positionX, positionY);
         type = TYPE.RABBIT;
         strength = STRENGTH.RABBIT;
+        this.color = color;
     }
 
     public Rabbit(Board.Color color) {
         super(color);
         type = TYPE.RABBIT;
         strength = STRENGTH.RABBIT;
+        this.color = color;
     }
 }

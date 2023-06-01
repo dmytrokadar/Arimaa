@@ -7,11 +7,13 @@ public class Camel extends Figure{
         super(color, positionX, positionY);
         type = TYPE.CAMEL;
         strength = STRENGTH.CAMEL;
+        this.color = color;
     }
 
     public Camel(Board.Color color) {
         super(color);
         type = TYPE.CAMEL;
         strength = STRENGTH.CAMEL;
+        this.color = color;
     }
 }
