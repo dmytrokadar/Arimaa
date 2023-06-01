@@ -1,6 +1,7 @@
 package Logic;
 
 import Figures.*;
+import Graphics.Tile;
 import Utilities.GameRecorder;
 import Utilities.Timer;
 
@@ -8,6 +9,12 @@ public class Board {
     public enum Color{
         GOLD,
         SILVER
+    }
+
+    public enum Phase{
+        EDIT,
+        GAME,
+        END
     }
 
     public Board(){

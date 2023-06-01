@@ -6,6 +6,6 @@ public class GameSettingsWindow {
     * */
 
     public void GameSettingsWindow(){
-        GameScene gs = new GameScene();
+        GameScene gs = new GameScene(false);
     }
 }

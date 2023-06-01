@@ -3,6 +3,7 @@ import Figures.Camel;
 import Figures.Cat;
 import Figures.Figure;
 import Graphics.FigureView;
+import Graphics.GameScene;
 import Graphics.Tile;
 import Logic.Board;
 import Utilities.Timer;
@@ -55,7 +56,7 @@ public class TestJavaFX extends Application{
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Scene scene = new Scene(createBoard());
+                Scene scene = new GameScene(false);
                 stage.setScene(scene);
                 stage.setTitle("Arimaa");
                 stage.show();
