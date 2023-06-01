@@ -20,6 +20,7 @@ public class Board {
         // first phase will be as in original game client - figures are already on board,
         // but you can change their position
         Elephant elephantGold = new Elephant(Color.GOLD);
+
         Elephant elephantSilver = new Elephant(Color.SILVER);
 
         Camel camelGold = new Camel(Color.GOLD);

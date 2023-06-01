@@ -8,8 +8,7 @@ import javafx.scene.shape.Rectangle;
 
 
 public class Tile extends Pane{
-    private Figure figure;
-    private ImageView figureView = null;
+    private FigureView figureView = null;
     private Rectangle r;
     private int posX;
     private int posY;
@@ -22,11 +21,7 @@ public class Tile extends Pane{
         getChildren().addAll(r);
     }
 
-    public Figure getFigure(){
-        return figure;
-    }
-
-    public void setFigureView(ImageView imageView) {
+    public void setFigureView(FigureView imageView) {
 //        getChildren().remove(figureView);
 
         figureView = imageView;
@@ -34,7 +29,6 @@ public class Tile extends Pane{
     }
 
     public void removeFigure(){
-        figure = null;
         figureView = null;
     }
 

@@ -1,4 +1,8 @@
 package MainWindow;
+import Figures.Camel;
+import Figures.Cat;
+import Figures.Figure;
+import Graphics.FigureView;
 import Graphics.Tile;
 import Logic.Board;
 import Utilities.Timer;
@@ -11,13 +15,19 @@ import javafx.geometry.Pos;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 //inspiration https://www.javatpoint.com/first-javafx-application
@@ -33,6 +43,14 @@ public class TestJavaFX extends Application{
 
         Button newGame = new Button("New Game");
         Button exit = new Button("Exit");
+
+        Label title = new Label("Arimaa");
+        title.setAlignment(Pos.CENTER);
+        title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 100));
+
+        StackPane titlePane = new StackPane();
+        titlePane.getChildren().add(title);
+        titlePane.setAlignment(Pos.CENTER);
 
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -51,18 +69,21 @@ public class TestJavaFX extends Application{
             }
         });
 
-        Rectangle rectangle = new Rectangle(100, 100, Color.GREEN);
-
-
-        GridPane root = new GridPane();
+        BorderPane root = new BorderPane();
 //        StackPane root = new StackPane();
 //        root.setAlignment(Pos.CENTER);
 //        root.setHgap(10);
 //        root.setVgap(10);
 
 //        root.setPadding(new Insets(0, 10, 0, 10));
-        root.add(newGame, 1, 1);
-        root.add(exit, 1, 2);
+        VBox buttonBox = new VBox();
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setSpacing(10);
+
+        buttonBox.getChildren().addAll(newGame, exit);
+
+        root.setTop(titlePane);
+        root.setCenter(buttonBox);
 //        root.add(rectangle, 0, 0);
 
         Scene scene = new Scene(root, 600,400);
@@ -89,7 +110,7 @@ public class TestJavaFX extends Application{
     GridPane createBoard(){
         GridPane gp = new GridPane();
         final Image im = new Image("Textures/camel_g.png");
-        final ImageView imageView = new ImageView(im);
+        final FigureView imageView = new FigureView(im, 0, 0, new Camel(Board.Color.GOLD, 0, 0));
 
         for (int i = 0; i < SIDE_SIZE; i++){
             for (int j = 0; j < SIDE_SIZE; j++){
@@ -106,7 +127,7 @@ public class TestJavaFX extends Application{
                     public void handle(DragEvent dragEvent) {
                         Dragboard db = dragEvent.getDragboard();
                         System.out.println("exit drag");
-                        t.setFigureView((ImageView) dragEvent.getGestureSource());
+                        t.setFigureView((FigureView) dragEvent.getGestureSource());
 //                        t.setFigureView((new ImageView(db.getImage())));
 
                         dragEvent.setDropCompleted(true);
