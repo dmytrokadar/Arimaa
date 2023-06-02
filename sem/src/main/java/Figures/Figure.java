@@ -43,7 +43,7 @@ public abstract class Figure {
     private int positionY;
     protected static TYPE type;
     protected STRENGTH strength;
-    private boolean isFrozen;
+    protected boolean isFrozen;
 
     public Figure(Board.Color color, int positionX, int positionY) {
         this.color = color;

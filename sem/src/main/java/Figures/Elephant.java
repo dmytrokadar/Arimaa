@@ -8,6 +8,7 @@ public class Elephant extends Figure{
         type = TYPE.ELEPHANT;
         strength = STRENGTH.ELEPHANT;
         this.color = color;
+        isFrozen = false;
     }
 
     public Elephant(Board.Color color) {
@@ -15,5 +16,6 @@ public class Elephant extends Figure{
         type = TYPE.ELEPHANT;
         strength = STRENGTH.ELEPHANT;
         this.color = color;
+        isFrozen = false;
     }
 }

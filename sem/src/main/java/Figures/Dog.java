@@ -8,6 +8,7 @@ public class Dog extends Figure{
         type = TYPE.DOG;
         strength = STRENGTH.DOG;
         this.color = color;
+        isFrozen = false;
     }
 
     public Dog(Board.Color color) {
@@ -15,5 +16,6 @@ public class Dog extends Figure{
         type = TYPE.DOG;
         strength = STRENGTH.DOG;
         this.color = color;
+        isFrozen = false;
     }
 }

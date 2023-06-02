@@ -8,6 +8,7 @@ public class Camel extends Figure{
         type = TYPE.CAMEL;
         strength = STRENGTH.CAMEL;
         this.color = color;
+        isFrozen = false;
     }
 
     public Camel(Board.Color color) {
@@ -15,5 +16,6 @@ public class Camel extends Figure{
         type = TYPE.CAMEL;
         strength = STRENGTH.CAMEL;
         this.color = color;
+        isFrozen = false;
     }
 }

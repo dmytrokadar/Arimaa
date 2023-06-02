@@ -18,6 +18,8 @@ public class Board {
     }
 
     private Phase phase;
+    private int moveCount;
+    private Color currentColorMove = Color.GOLD;
 
     public Board(){
         Player p1 = new Player();
@@ -69,11 +71,35 @@ public class Board {
 //        Rabbit rabbitSilver8 = new Rabbit(Color.SILVER);
     }
 
+    public void increaseMoveCount(){
+        moveCount++;
+        if(moveCount > 3){
+            endMove();
+        }
+    }
+
+    public void endMove(){
+        if(currentColorMove == Color.GOLD)
+            currentColorMove = Color.SILVER;
+        else
+            currentColorMove = Color.GOLD;
+
+        moveCount = 0;
+    }
+
     public void setPhase(Phase phase) {
         this.phase = phase;
     }
 
     public Phase getPhase() {
         return phase;
+    }
+
+    public int getMoveCount() {
+        return moveCount;
+    }
+
+    public Color getCurrentColorMove() {
+        return currentColorMove;
     }
 }

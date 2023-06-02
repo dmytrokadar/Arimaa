@@ -21,6 +21,7 @@ public class GameScene extends Scene {
 
     Tile tiles[][];
     Pane pane;
+    Board board;
 
     public GameScene(boolean load){
         super(new Pane());
@@ -33,23 +34,30 @@ public class GameScene extends Scene {
 
         populateBoard(load);
 
-        Board b = new Board();
+        board = new Board();
     }
 
     private Board.Color checkForWin(){
-        for(Tile tile : tiles[0]){
+
+        for(Tile tilesL[] : tiles){
+            Tile tile = tilesL[0];
             if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
                     tile.getFigureView().getFigure().getColor() == Board.Color.GOLD){
                 return  Board.Color.GOLD;
             }
-        }
-
-        for(Tile tile : tiles[SIDE_SIZE - 1]){
+            tile = tilesL[SIDE_SIZE - 1];
             if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
                     tile.getFigureView().getFigure().getColor() == Board.Color.SILVER){
                 return  Board.Color.SILVER;
             }
         }
+
+//        for(Tile tile : tiles[SIDE_SIZE - 1]){
+//            if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
+//                    tile.getFigureView().getFigure().getColor() == Board.Color.SILVER){
+//                return  Board.Color.SILVER;
+//            }
+//        }
 
         int count = 0;
         int frozenCount = 0;
@@ -89,7 +97,7 @@ public class GameScene extends Scene {
         int posX = fw.getPosX();
         int posY = fw.getPosY();
 
-        System.out.println(fw.getFigure().getColor());
+        System.out.println(fw.getFigure().getColor() + "fFigureNear");
         for(Tile tiles_loc[]:tiles){
             for (Tile tile : tiles_loc){
                 System.out.print((tile.getFigureView() != null) + " ");
@@ -129,6 +137,7 @@ public class GameScene extends Scene {
         int posY = fw.getPosY();
         System.out.println(fw.getFigure().getColor());
 
+        if(board.getPhase() == Board.Phase.EDIT)
         if(tile.getPosX() == posX + 1 && tile.getPosY() == posY){
             return true;
         }
@@ -205,7 +214,6 @@ public class GameScene extends Scene {
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
-                        System.out.println(tiles[j][i].getFigureView().getFigure().getColor());
                     }
                     if(i == SIDE_SIZE - 1 && (j < 2)){
                         FigureView fw = new FigureView(new Image("Textures/cat_g.png"), j, i, new Cat(Board.Color.GOLD));
@@ -310,7 +318,13 @@ public class GameScene extends Scene {
                                 }
                             }
 
-                            System.out.println(checkForWin());
+
+                            Board.Color win = checkForWin();
+                            System.out.println(win + "win");
+                            if(win != null){
+                                board.setPhase(Board.Phase.END);
+                            }
+
                         } else {
                             dragEvent.setDropCompleted(false);
                         }
