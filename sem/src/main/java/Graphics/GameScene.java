@@ -7,18 +7,19 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.sql.SQLOutput;
 
@@ -29,6 +30,13 @@ import static MainWindow.MainWindow.TILE_SIZE;
 public class GameScene extends Scene {
 
     Tile tiles[][];
+
+    Label time1;
+    Label time2;
+    Label gameState;
+    Label whoMoves;
+
+
     Pane pane;
     BorderPane infoPane;
     Board board;
@@ -363,11 +371,13 @@ public class GameScene extends Scene {
 
 
                                 Board.Color win = checkForWin();
-                                System.out.println(win + "win");
+                                logger.info(win + "win");
                                 if(win != null){
                                     board.setPhase(Board.Phase.END);
+                                    gameState.setText(win + " WIN!!!!!!!");
                                 }
                                 board.increaseMoveCount();
+                                whoMoves.setText(board.getCurrentColorMove() + " Moves");
                             }
 
                         } else {
@@ -431,12 +441,32 @@ public class GameScene extends Scene {
         infoPane.layoutXProperty().bind(boardGP.widthProperty());
         infoPane.prefWidthProperty().bind(widthProperty().subtract(boardGP.widthProperty()));
         infoPane.prefHeightProperty().bind(heightProperty());
+        infoPane.setPadding(new Insets(20));
+
+        gameState = new Label("Editing");
+        gameState.setFont(Font.font("Impact", 50));
+        gameState.setAlignment(Pos.CENTER);
+        time1 = new Label("00:00");
+        time1.setFont(Font.font("Impact", 30));
+        time1.setAlignment(Pos.CENTER_LEFT);
+        time2 = new Label("00:00");
+        time2.setFont(Font.font("Impact", 30));
+        time2.setAlignment(Pos.CENTER_LEFT);
+        whoMoves = new Label("GOLD Moves");
+        whoMoves.setFont(Font.font("Impact", 30));
+        whoMoves.setAlignment(Pos.CENTER_LEFT);
+
+
+        VBox times = new VBox(40, time1, time2, gameState, whoMoves);
+        times.setAlignment(Pos.CENTER);
+        infoPane.setTop(times);
 
         Button start = new Button("Start");
         start.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 board.setPhase(Board.Phase.GAME);
+                gameState.setText("Game");
                 start.setDisable(true);
             }
         });
@@ -454,6 +484,7 @@ public class GameScene extends Scene {
             @Override
             public void handle(ActionEvent actionEvent) {
                 board.endMove();
+                whoMoves.setText(board.getCurrentColorMove() + " Moves");
             }
         });
 

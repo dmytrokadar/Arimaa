@@ -20,6 +20,6 @@ public class Timer {
     }
 
     public void pauseTimer(){
-        
+        enabled = false;
     }
 }
