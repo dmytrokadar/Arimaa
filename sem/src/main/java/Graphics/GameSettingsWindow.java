@@ -1,11 +1,16 @@
 package Graphics;
 
-public class GameSettingsWindow {
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+
+public class GameSettingsWindow extends Scene{
     /*
     * Setup gamemode(vs computer or versus other player), choose name
     * */
 
-    public void GameSettingsWindow(){
-        GameScene gs = new GameScene(false);
+    public GameSettingsWindow(){
+        super(new Pane());
+        Scene scene = new GameScene(false);
     }
 }

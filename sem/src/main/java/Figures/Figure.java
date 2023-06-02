@@ -38,11 +38,11 @@ public abstract class Figure {
         ELEPHANT
     }
 
-    protected static Board.Color color;
+    protected Board.Color color;
     private int positionX;
     private int positionY;
     protected static TYPE type;
-    protected static STRENGTH strength;
+    protected STRENGTH strength;
     private boolean isFrozen;
 
     public Figure(Board.Color color, int positionX, int positionY) {

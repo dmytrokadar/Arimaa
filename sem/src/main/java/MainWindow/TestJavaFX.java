@@ -4,6 +4,7 @@ import Figures.Cat;
 import Figures.Figure;
 import Graphics.FigureView;
 import Graphics.GameScene;
+import Graphics.GameSettingsWindow;
 import Graphics.Tile;
 import Logic.Board;
 import Utilities.Timer;
@@ -56,6 +57,11 @@ public class TestJavaFX extends Application{
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+//                Scene scene = new GameSettingsWindow();
+//                stage.setScene(scene);
+//                stage.setTitle("Settings");
+//                stage.show();
+
                 Scene scene = new GameScene(false);
                 stage.setScene(scene);
                 stage.setTitle("Arimaa");
