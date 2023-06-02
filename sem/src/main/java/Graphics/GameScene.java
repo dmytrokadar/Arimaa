@@ -184,6 +184,8 @@ public class GameScene extends Scene {
         System.out.println(fw.getFigure().getColor());
 
         if(board.getPhase() == Board.Phase.END){
+            timer1.pauseTimer();
+            timer2.pauseTimer();
             return false;
         }
 

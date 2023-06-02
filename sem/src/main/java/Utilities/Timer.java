@@ -11,7 +11,7 @@ public class Timer {
     /*
     * Timer for every player
     * */
-    private static final int SECONDS = 10;
+    private static final int SECONDS = 600;
 
     public Board.Color getColor() {
         return color;
