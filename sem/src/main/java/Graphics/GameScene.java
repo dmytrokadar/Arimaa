@@ -22,6 +22,7 @@ import javafx.scene.shape.Rectangle;
 
 import java.sql.SQLOutput;
 
+import static Logic.Board.logger;
 import static MainWindow.MainWindow.SIDE_SIZE;
 import static MainWindow.MainWindow.TILE_SIZE;
 
@@ -31,6 +32,7 @@ public class GameScene extends Scene {
     Pane pane;
     BorderPane infoPane;
     Board board;
+    GridPane boardGP;
 
     public GameScene(boolean load){
         super(new Pane());
@@ -39,7 +41,8 @@ public class GameScene extends Scene {
 
         tiles = new Tile[SIDE_SIZE][SIDE_SIZE];
 
-        pane.getChildren().add(createBoard());
+        boardGP = createBoard();
+        pane.getChildren().add(boardGP);
         createPane();
 
         populateBoard(load);
@@ -147,15 +150,19 @@ public class GameScene extends Scene {
         int posY = fw.getPosY();
         System.out.println(fw.getFigure().getColor());
 
+
         if(board.getPhase() == Board.Phase.EDIT){
             return true;
+        }
+
+        if(tile.getFigureView() != null){
+            return false;
         }
 
         if(fw.getFigure().getColor() != board.getCurrentColorMove()){
             return false;
         }
 
-        if(board.getPhase() == Board.Phase.EDIT)
         if(tile.getPosX() == posX + 1 && tile.getPosY() == posY){
             return true;
         }
@@ -184,7 +191,7 @@ public class GameScene extends Scene {
     };
 
     private EventHandler<DragEvent> onDragDone = e -> {
-        ((Tile)e.getSource()).removeFigure();
+//        ((Tile)e.getSource()).removeFigure();
     };
 
     private EventHandler<MouseEvent> onDragDetectedFigure = e ->{
@@ -324,9 +331,26 @@ public class GameScene extends Scene {
 
                         if(validMove((FigureView) dragEvent.getGestureSource(), t)) {
                             dragEvent.setDropCompleted(true);
-                            t.setFigureView((FigureView) dragEvent.getGestureSource());
-                            ((FigureView) dragEvent.getGestureSource()).setPosX(t.getPosX());
-                            ((FigureView) dragEvent.getGestureSource()).setPosY(t.getPosY());
+                            FigureView fw = ((FigureView) dragEvent.getGestureSource());
+
+
+                            Tile tileSource = (Tile)fw.getParent();
+                            FigureView fwTarget = t.getFigureView();
+                            if(fwTarget != null){
+                                tileSource.removeFigure();
+                                tileSource.setFigureView(fwTarget);
+                                fwTarget.setPosX(tileSource.getPosX());
+                                fwTarget.setPosY(tileSource.getPosY());
+                                logger.info("swapped "+ t.getPosX()  + " " + t.getPosY() + " " +
+                                        tileSource.getPosX() + " " + tileSource.getPosY());
+                            } else {
+                                tileSource.removeFigure();
+                            }
+                            t.removeFigure();
+                            t.setFigureView(fw);
+                            fw.setPosX(t.getPosX());
+                            fw.setPosY(t.getPosY());
+
 
                             if(board.getPhase() != Board.Phase.EDIT){
                                 if ((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
@@ -404,6 +428,9 @@ public class GameScene extends Scene {
 
     private void createPane(){
         infoPane = new BorderPane();
+        infoPane.layoutXProperty().bind(boardGP.widthProperty());
+        infoPane.prefWidthProperty().bind(widthProperty().subtract(boardGP.widthProperty()));
+        infoPane.prefHeightProperty().bind(heightProperty());
 
         Button start = new Button("Start");
         start.setOnAction(new EventHandler<ActionEvent>() {
@@ -433,10 +460,10 @@ public class GameScene extends Scene {
         Button forward = new Button("->");
         Button backward = new Button("<-");
 
-        HBox buttons = new HBox(backward, start, forward);
-        HBox downButtons = new HBox(exit, endMove);
+        HBox buttons = new HBox(10, backward, start, forward);
+        HBox downButtons = new HBox(20, exit, endMove);
         buttons.setAlignment(Pos.CENTER);
-        downButtons.setAlignment(Pos.BOTTOM_LEFT);
+        downButtons.setAlignment(Pos.CENTER);
 
         infoPane.setCenter(buttons);
         infoPane.setBottom(downButtons);

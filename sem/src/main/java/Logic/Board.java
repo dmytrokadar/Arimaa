@@ -22,7 +22,7 @@ public class Board {
     private Phase phase;
     private int moveCount;
     private Color currentColorMove = Color.GOLD;
-    static Logger logger = Logger.getLogger(Board.class.getName());
+    public static Logger logger = Logger.getLogger(Board.class.getName());
 
     public Board(){
         Player p1 = new Player();

@@ -16,7 +16,7 @@ public class Timer {
     }
 
     public void startTimer(){
-
+        enabled = true;
     }
 
     public void pauseTimer(){

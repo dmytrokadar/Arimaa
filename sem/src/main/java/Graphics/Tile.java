@@ -29,6 +29,8 @@ public class Tile extends Pane{
     }
 
     public void removeFigure(){
+        if(figureView != null)
+            getChildren().remove(figureView);
         figureView = null;
     }
 

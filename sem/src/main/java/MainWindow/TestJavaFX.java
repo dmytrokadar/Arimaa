@@ -41,7 +41,8 @@ public class TestJavaFX extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-        Board board = new Board();
+        stage.minWidthProperty().bind(stage.heightProperty().multiply(1.5));
+        stage.maxWidthProperty().bind(stage.heightProperty().multiply(1.7));
 
         Button newGame = new Button("New Game");
         Button exit = new Button("Exit");
