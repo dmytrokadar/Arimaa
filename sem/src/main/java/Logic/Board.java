@@ -79,12 +79,15 @@ public class Board {
     }
 
     public void endMove(){
-        if(currentColorMove == Color.GOLD)
-            currentColorMove = Color.SILVER;
-        else
-            currentColorMove = Color.GOLD;
+        if(moveCount > 0){
+            if(currentColorMove == Color.GOLD)
+                currentColorMove = Color.SILVER;
+            else
+                currentColorMove = Color.GOLD;
 
-        moveCount = 0;
+            moveCount = 0;
+        }
+
     }
 
     public void setPhase(Phase phase) {

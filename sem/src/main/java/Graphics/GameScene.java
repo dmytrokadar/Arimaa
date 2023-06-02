@@ -2,12 +2,20 @@ package Graphics;
 
 import Figures.*;
 import Logic.Board;
+import MainWindow.MainWindow;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -21,6 +29,7 @@ public class GameScene extends Scene {
 
     Tile tiles[][];
     Pane pane;
+    BorderPane infoPane;
     Board board;
 
     public GameScene(boolean load){
@@ -31,6 +40,7 @@ public class GameScene extends Scene {
         tiles = new Tile[SIDE_SIZE][SIDE_SIZE];
 
         pane.getChildren().add(createBoard());
+        createPane();
 
         populateBoard(load);
 
@@ -378,8 +388,47 @@ public class GameScene extends Scene {
 //        gp.getChildren().add(imageView);
 //        gp.getChildren().add(new ImageView(im));
 
-
-
         return gp;
+    }
+
+    private void createPane(){
+        infoPane = new BorderPane();
+
+        Button start = new Button("Start");
+        start.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                board.setPhase(Board.Phase.GAME);
+                start.setDisable(true);
+            }
+        });
+
+        Button exit = new Button("Exit");
+        exit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Platform.exit();
+            }
+        });
+
+        Button endMove = new Button("End Move");
+        endMove.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                board.endMove();
+            }
+        });
+
+        Button forward = new Button("->");
+        Button backward = new Button("<-");
+
+        HBox buttons = new HBox(backward, start, forward);
+        HBox downButtons = new HBox(exit, endMove);
+        buttons.setAlignment(Pos.CENTER);
+        downButtons.setAlignment(Pos.BOTTOM_LEFT);
+
+        infoPane.setCenter(buttons);
+        infoPane.setBottom(downButtons);
+        pane.getChildren().add(infoPane);
     }
 }
