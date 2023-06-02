@@ -82,6 +82,10 @@ public abstract class Figure {
         }
     }
 
+    public void setFrozen(boolean frozen) {
+        isFrozen = frozen;
+    }
+
     public int getPositionX() {
         return positionX;
     }

@@ -8,6 +8,6 @@ public class Main {
         System.out.println(Figure.STRENGTH.CAMEL);
 
 
-        new MainWindow1();
+        new MainWindow();
     }
 }

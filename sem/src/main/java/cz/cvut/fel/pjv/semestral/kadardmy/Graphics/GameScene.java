@@ -108,8 +108,11 @@ public class GameScene extends Scene {
         for(Tile tiles_loc[]:tiles){
             for (Tile tile : tiles_loc){
                 count++;
-                if (tile.getFigureView() != null && tile.getFigureView().getFigure().getColor() == Board.Color.GOLD){
-                    frozenCount++;
+                if(tile.getFigureView() != null){
+                    tile.getFigureView().getFigure().setFrozen(checkIsFreesed(tile.getFigureView()));
+                    if (tile.getFigureView().getFigure().isFrozen()){
+                        frozenCount++;
+                    }
                 }
             }
 //            System.out.println();
@@ -145,31 +148,54 @@ public class GameScene extends Scene {
     public Figure.STRENGTH friendlyFigureNear(FigureView fw, Board.Color color){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
+        Figure.STRENGTH maxS = null;
 
         if(posX != 0){
             if(tiles[posX-1][posY].getFigureView() != null && tiles[posX-1][posY].getFigureView().getFigure().getColor()
                     == color)
-                return tiles[posX-1][posY].getFigureView().getFigure().getStrength();
+                maxS = tiles[posX-1][posY].getFigureView().getFigure().getStrength();
         }
         if(posX != SIDE_SIZE-1){
             if(tiles[posX+1][posY].getFigureView() != null && tiles[posX+1][posY].getFigureView().getFigure().getColor()
                     == color)
-                return tiles[posX+1][posY].getFigureView().getFigure().getStrength();
+                if((maxS == null) ||
+                        (maxS.getValue() < tiles[posX+1][posY].getFigureView().getFigure().getStrength().getValue()))
+                    maxS = tiles[posX+1][posY].getFigureView().getFigure().getStrength();
         }
 
         if(posY != 0){
             if(tiles[posX][posY-1].getFigureView() != null && tiles[posX][posY-1].getFigureView().getFigure().getColor()
                     == color){
-                return tiles[posX][posY-1].getFigureView().getFigure().getStrength();
+                if((maxS == null) ||
+                        (maxS.getValue() < tiles[posX][posY-1].getFigureView().getFigure().getStrength().getValue()))
+                maxS = tiles[posX][posY-1].getFigureView().getFigure().getStrength();
             }
         }
         if(posY != SIDE_SIZE-1){
             if(tiles[posX][posY+1].getFigureView() != null && tiles[posX][posY+1].getFigureView().getFigure().getColor()
-                    == color)
-                return tiles[posX][posY+1].getFigureView().getFigure().getStrength();
+                    == color){
+                if((maxS == null) || (maxS.getValue() <
+                        tiles[posX][posY+1].getFigureView().getFigure().getStrength().getValue()))
+                    maxS = tiles[posX][posY+1].getFigureView().getFigure().getStrength();
+            }
         }
 
-        return null;
+        return maxS;
+    }
+    public boolean checkIsFreesed(FigureView fw){
+        Board.Color color = fw.getFigure().getColor();
+        if(color == Board.Color.GOLD){
+            color = Board.Color.SILVER;
+        } else {
+            color = Board.Color.GOLD;
+        }
+
+        if(!friendlyFigureNear(fw) && (friendlyFigureNear(fw, color) != null) &&
+                friendlyFigureNear(fw, color).getValue() > fw.getFigure().getStrength().getValue()){
+            return true;
+        }
+
+        return false;
     }
 
     public boolean friendlyFigureNear(FigureView fw){
@@ -214,6 +240,11 @@ public class GameScene extends Scene {
         int posY = fw.getPosY();
 //
 //        System.out.println(fw.getFigure().getColor());
+        fw.getFigure().setFrozen(checkIsFreesed(fw));
+
+        if(fw.getFigure().isFrozen()){
+            return false;
+        }
 
         if(board.getPhase() == Board.Phase.END){
             timer1.pauseTimer();
@@ -231,7 +262,8 @@ public class GameScene extends Scene {
 
         if(fw.getFigure().getColor() != board.getCurrentColorMove()){
             rabbitPush = true;
-            if (fw.getFigure().getStrength().getValue()
+
+            if ( friendlyFigureNear(fw, board.getCurrentColorMove()) != null && fw.getFigure().getStrength().getValue()
                     >= friendlyFigureNear(fw, board.getCurrentColorMove()).getValue()){
                 return false;
             }
