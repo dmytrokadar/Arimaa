@@ -28,7 +28,6 @@ public class Board {
         Player p1 = new Player();
         AI ai = new AI();
         GameRecorder gameRecorder = new GameRecorder();
-        Timer timer = new Timer();
 
         phase = Phase.EDIT;
         // init figures

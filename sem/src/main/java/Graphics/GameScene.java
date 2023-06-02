@@ -3,6 +3,8 @@ package Graphics;
 import Figures.*;
 import Logic.Board;
 import MainWindow.MainWindow;
+import Utilities.Timer;
+import Utilities.UpdateTime;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -22,6 +24,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 import java.sql.SQLOutput;
+import java.sql.Time;
 
 import static Logic.Board.logger;
 import static MainWindow.MainWindow.SIDE_SIZE;
@@ -36,6 +39,8 @@ public class GameScene extends Scene {
     Label gameState;
     Label whoMoves;
 
+    Timer timer1;
+    Timer timer2;
 
     Pane pane;
     BorderPane infoPane;
@@ -378,6 +383,13 @@ public class GameScene extends Scene {
                                 }
                                 board.increaseMoveCount();
                                 whoMoves.setText(board.getCurrentColorMove() + " Moves");
+                                if(board.getCurrentColorMove() == timer1.getColor()){
+                                    timer2.pauseTimer();
+                                    timer1.startTimer();
+                                } else {
+                                    timer1.pauseTimer();
+                                    timer2.startTimer();
+                                }
                             }
 
                         } else {
@@ -446,15 +458,21 @@ public class GameScene extends Scene {
         gameState = new Label("Editing");
         gameState.setFont(Font.font("Impact", 50));
         gameState.setAlignment(Pos.CENTER);
-        time1 = new Label("00:00");
+        time1 = new Label("10:00");
         time1.setFont(Font.font("Impact", 30));
         time1.setAlignment(Pos.CENTER_LEFT);
-        time2 = new Label("00:00");
+        time2 = new Label("10:00");
         time2.setFont(Font.font("Impact", 30));
         time2.setAlignment(Pos.CENTER_LEFT);
         whoMoves = new Label("GOLD Moves");
         whoMoves.setFont(Font.font("Impact", 30));
         whoMoves.setAlignment(Pos.CENTER_LEFT);
+
+        timer1 = new Timer(Board.Color.GOLD);
+        timer1.getProperty().addListener(new UpdateTime(time2));
+
+        timer2 = new Timer(Board.Color.SILVER);
+        timer2.getProperty().addListener(new UpdateTime(time1));
 
 
         VBox times = new VBox(40, time1, time2, gameState, whoMoves);
@@ -468,6 +486,7 @@ public class GameScene extends Scene {
                 board.setPhase(Board.Phase.GAME);
                 gameState.setText("Game");
                 start.setDisable(true);
+                timer1.startTimer();
             }
         });
 
@@ -485,6 +504,13 @@ public class GameScene extends Scene {
             public void handle(ActionEvent actionEvent) {
                 board.endMove();
                 whoMoves.setText(board.getCurrentColorMove() + " Moves");
+                if(board.getCurrentColorMove() == timer1.getColor()){
+                    timer2.pauseTimer();
+                    timer1.startTimer();
+                } else {
+                    timer1.pauseTimer();
+                    timer2.startTimer();
+                }
             }
         });
 
