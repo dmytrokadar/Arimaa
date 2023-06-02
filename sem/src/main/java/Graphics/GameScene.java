@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,14 +20,11 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-
-import java.sql.SQLOutput;
-import java.sql.Time;
 
 import static Logic.Board.logger;
 import static MainWindow.MainWindow.SIDE_SIZE;
 import static MainWindow.MainWindow.TILE_SIZE;
+
 
 public class GameScene extends Scene {
 
@@ -49,6 +45,11 @@ public class GameScene extends Scene {
 
     boolean rabbitPush = false;
 
+    /**
+     * MainScene with the game
+     *
+     * @param load - load from file or new game
+     * */
     public GameScene(boolean load){
         super(new Pane());
 
@@ -141,6 +142,7 @@ public class GameScene extends Scene {
         return null;
     }
 
+    //get figures with needed color
     public Figure.STRENGTH friendlyFigureNear(FigureView fw, Board.Color color){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
@@ -211,8 +213,8 @@ public class GameScene extends Scene {
     private boolean validMove(FigureView fw, Tile tile){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
-
-        System.out.println(fw.getFigure().getColor());
+//
+//        System.out.println(fw.getFigure().getColor());
 
         if(board.getPhase() == Board.Phase.END){
             timer1.pauseTimer();
@@ -274,7 +276,7 @@ public class GameScene extends Scene {
     private EventHandler<MouseEvent> onDragDetectedFigure = e ->{
         // inspiration https://docs.oracle.com/javafx/2/drag_drop/jfxpub-drag_drop.htm
             Dragboard db = ((FigureView)e.getSource()).startDragAndDrop(TransferMode.MOVE);
-            System.out.println("enter drag");
+            logger.info("enter drag");
 
             ClipboardContent content = new ClipboardContent();
             content.putImage(((FigureView)e.getSource()).getImage());
@@ -285,7 +287,7 @@ public class GameScene extends Scene {
 
     private EventHandler<DragEvent> setOnDragDroppedFigure = e -> {
             Dragboard db = e.getDragboard();
-            System.out.println("exit drag");
+            logger.info("exit drag");
 
 
 
@@ -403,7 +405,7 @@ public class GameScene extends Scene {
                     @Override
                     public void handle(DragEvent dragEvent) {
                         Dragboard db = dragEvent.getDragboard();
-                        System.out.println("exit drag");
+                        logger.info("exit drag");
 //                        t.setFigureView((new ImageView(db.getImage())));
 
                         if(validMove((FigureView) dragEvent.getGestureSource(), t)) {
@@ -432,7 +434,7 @@ public class GameScene extends Scene {
                             if(board.getPhase() != Board.Phase.EDIT){
                                 if ((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
                                         (t.getPosX() == 2 || t.getPosX() == 5))) {
-                                    System.out.println(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
+                                    logger.info(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
                                     if (!friendlyFigureNear(t.getFigureView())) {
                                         t.removeFigure();
                                     }

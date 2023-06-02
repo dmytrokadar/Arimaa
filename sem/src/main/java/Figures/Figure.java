@@ -6,10 +6,10 @@ import javax.swing.text.Position;
 
 public abstract class Figure {
 
-    /*
+    /**
     * Abstract class for all figures
+    *
     * */
-
     public enum STRENGTH {
         RABBIT(0),
         CAT(1),
@@ -29,6 +29,9 @@ public abstract class Figure {
         }
     }
 
+    /**
+    * Type of figure
+    * */
     public enum TYPE {
         RABBIT,
         CAT,
@@ -45,6 +48,13 @@ public abstract class Figure {
     protected STRENGTH strength;
     protected boolean isFrozen;
 
+    /**
+    * Constructor for Figures
+    *
+    * @param color - golden or silver
+    * @param positionX - position of the figure on the board
+    * @param positionY - position of the figure on the board
+    * */
     public Figure(Board.Color color, int positionX, int positionY) {
         this.color = color;
         this.positionX = positionX;
@@ -52,12 +62,19 @@ public abstract class Figure {
         isFrozen = false;
     }
 
+    /**
+     * Constructor for Figures
+     *
+     * @param color - golden or silver
+     * */
     public Figure(Board.Color color) {
         this.color = color;
     }
 
+    /**
+    * Change figure position
+    * */
     public void changePosition(int positionX, int positionY) {
-        //TODO mb provirku i ne treba
         if((positionX >= 0 && positionX < 8) && (positionY >= 0 && positionY < 8)){
             this.positionX = positionX;
             this.positionY = positionY;
@@ -66,8 +83,6 @@ public abstract class Figure {
             System.out.println("Out of boundaries: " + positionX + " " + positionY);
         }
     }
-
-
 
     public int getPositionX() {
         return positionX;

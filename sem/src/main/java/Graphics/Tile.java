@@ -13,6 +13,11 @@ public class Tile extends Pane{
     private int posX;
     private int posY;
 
+    /**
+     * Every tile that is rendered on the board. Can contain FigureView
+     *
+     * @param r - rectangle for background
+     */
     public Tile(Rectangle r, int posX, int posY) {
         this.r = r;
         this.posX = posX;
@@ -21,6 +26,11 @@ public class Tile extends Pane{
         getChildren().addAll(r);
     }
 
+    /**
+     * Adds FigureView to Tile
+     *
+     * @param imageView - FigureView with picture and figure
+     * */
     public void setFigureView(FigureView imageView) {
 //        getChildren().remove(figureView);
 
@@ -28,6 +38,11 @@ public class Tile extends Pane{
         getChildren().add(figureView);
     }
 
+    /**
+     * Removes FigureView from Tile
+     *
+     *
+     * */
     public void removeFigure(){
         if(figureView != null)
             getChildren().remove(figureView);

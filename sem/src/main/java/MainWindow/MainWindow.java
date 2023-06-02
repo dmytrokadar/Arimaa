@@ -1,38 +1,69 @@
 package MainWindow;
-
+import Figures.Camel;
+import Figures.Cat;
+import Figures.Figure;
+import Graphics.FigureView;
+import Graphics.GameScene;
 import Graphics.GameSettingsWindow;
+import Graphics.Tile;
 import Logic.Board;
+import Utilities.Timer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import javax.swing.*;
+//inspiration https://www.javatpoint.com/first-javafx-application
 
-public class MainWindow extends Application {
+public class MainWindow extends Application{
     public static final int TILE_SIZE = 80;
     public static final int NUM_OF_TILES = 64;
     public static final int SIDE_SIZE = 8;
 
     @Override
     public void start(Stage stage) throws Exception {
-        Board board = new Board();
+        stage.minWidthProperty().bind(stage.heightProperty().multiply(1.5));
+        stage.maxWidthProperty().bind(stage.heightProperty().multiply(1.7));
 
         Button newGame = new Button("New Game");
         Button exit = new Button("Exit");
 
+        Label title = new Label("Arimaa");
+        title.setAlignment(Pos.CENTER);
+        title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 100));
+
+        StackPane titlePane = new StackPane();
+        titlePane.getChildren().add(title);
+        titlePane.setAlignment(Pos.CENTER);
+
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Scene scene = new Scene(createBoard());
+//                Scene scene = new GameSettingsWindow();
+//                stage.setScene(scene);
+//                stage.setTitle("Settings");
+//                stage.show();
+
+                Scene scene = new GameScene(false);
                 stage.setScene(scene);
                 stage.setTitle("Arimaa");
                 stage.show();
@@ -46,18 +77,21 @@ public class MainWindow extends Application {
             }
         });
 
-        Rectangle rectangle = new Rectangle(100, 100, Color.GREEN);
-
-
-        GridPane root = new GridPane();
+        BorderPane root = new BorderPane();
 //        StackPane root = new StackPane();
 //        root.setAlignment(Pos.CENTER);
 //        root.setHgap(10);
 //        root.setVgap(10);
 
 //        root.setPadding(new Insets(0, 10, 0, 10));
-        root.add(newGame, 1, 1);
-        root.add(exit, 1, 2);
+        VBox buttonBox = new VBox();
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setSpacing(10);
+
+        buttonBox.getChildren().addAll(newGame, exit);
+
+        root.setTop(titlePane);
+        root.setCenter(buttonBox);
 //        root.add(rectangle, 0, 0);
 
         Scene scene = new Scene(root, 600,400);
@@ -68,9 +102,23 @@ public class MainWindow extends Application {
         stage.show();
     }
 
+    private EventHandler<DragEvent> onDragOver = e -> {
+        if(e.getSource() != e.getGestureSource()){
+            e.acceptTransferModes(TransferMode.ANY);
+            System.out.println("dragged to tile");
+        }
+
+        e.consume();
+    };
+
+    private EventHandler<DragEvent> onDragDone = e -> {
+        ((Tile)e.getSource()).removeFigure();
+    };
+
     GridPane createBoard(){
         GridPane gp = new GridPane();
-        Image im = new Image("Textures/camel_g.png");
+        final Image im = new Image("Textures/camel_g.png");
+        final FigureView imageView = new FigureView(im, 0, 0, new Camel(Board.Color.GOLD, 0, 0));
 
         for (int i = 0; i < SIDE_SIZE; i++){
             for (int j = 0; j < SIDE_SIZE; j++){
@@ -79,30 +127,69 @@ public class MainWindow extends Application {
                     r.setFill(Color.GREEN);
                 }
                 r.setStroke(Color.BLACK);
+//                r.setOnDragOver(onDragOver);
+                Tile t = new Tile(r, j, i);
+                t.setOnDragOver(onDragOver);
+                t.setOnDragDropped(new EventHandler<DragEvent>() {
+                    @Override
+                    public void handle(DragEvent dragEvent) {
+                        Dragboard db = dragEvent.getDragboard();
+                        System.out.println("exit drag");
+                        t.setFigureView((FigureView) dragEvent.getGestureSource());
+//                        t.setFigureView((new ImageView(db.getImage())));
+
+                        dragEvent.setDropCompleted(true);
+
+                        dragEvent.consume();
+                    }
+                });
+                t.setOnDragDone(onDragDone);
                 //TODO mb j i i pominyaty mistamy
-                gp.add(r, i, j);
+                gp.add(t, j, i);
             }
         }
-        gp.getChildren().add(new ImageView(im));
-        gp.getChildren().add(new ImageView(im));
+
+        imageView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            // inspiration https://docs.oracle.com/javafx/2/drag_drop/jfxpub-drag_drop.htm
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Dragboard db = imageView.startDragAndDrop(TransferMode.MOVE);
+                System.out.println("enter drag");
+
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(imageView.getImage());
+                db.setContent(content);
+
+                mouseEvent.consume();
+            }
+        });
+
+        imageView.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+                Dragboard db = dragEvent.getDragboard();
+                System.out.println("exit drag");
+
+
+
+                dragEvent.setDropCompleted(true);
+
+                dragEvent.consume();
+            }
+        });
+
+        imageView.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+//                imageView.setImage(null);
+            }
+        });
+
+        gp.getChildren().add(imageView);
+//        gp.getChildren().add(new ImageView(im));
 
 
 
         return gp;
     }
-
-//    public MainWindow() {
-//        setTitle("Arimaa");
-//
-////        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-////        setContentPane(new GamePanel(1280,720));
-////        //TODO add picture
-//////        setIconImage(new ImageIcon(imgURL).getImage());
-////        setIgnoreRepaint(true);
-////
-////        pack();
-////        setLocationRelativeTo(null);
-////        setVisible(true);
-//        GameSettingsWindow settingsWindow = new GameSettingsWindow();
-//    }
 }

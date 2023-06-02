@@ -9,6 +9,11 @@ public class FigureView extends ImageView {
     private int posY;
     private Figure figure;
 
+    /**
+     * Class that binds Tiles with Figures, contains Figure image
+     *
+     * @param figure - figure
+     * */
     public FigureView(int posX, int posY, Figure figure) {
         this.posX = posX;
         this.posY = posY;
