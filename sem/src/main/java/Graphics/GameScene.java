@@ -36,11 +36,66 @@ public class GameScene extends Scene {
         Board b = new Board();
     }
 
+    private Board.Color checkForWin(){
+        for(Tile tile : tiles[0]){
+            if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
+                    tile.getFigureView().getFigure().getColor() == Board.Color.GOLD){
+                return  Board.Color.GOLD;
+            }
+        }
+
+        for(Tile tile : tiles[SIDE_SIZE - 1]){
+            if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
+                    tile.getFigureView().getFigure().getColor() == Board.Color.SILVER){
+                return  Board.Color.SILVER;
+            }
+        }
+
+        int count = 0;
+        int frozenCount = 0;
+        for(Tile tiles_loc[]:tiles){
+            for (Tile tile : tiles_loc){
+                count++;
+                if (tile.getFigureView() != null && tile.getFigureView().getFigure().getColor() == Board.Color.GOLD){
+                    frozenCount++;
+                }
+            }
+//            System.out.println();
+        }
+
+        if(count == frozenCount){
+            return Board.Color.SILVER;
+        }
+
+        count = 0;
+        frozenCount = 0;
+        for(Tile tiles_loc[]:tiles){
+            for (Tile tile : tiles_loc){
+                count++;
+                if (tile.getFigureView() != null && tile.getFigureView().getFigure().getColor() == Board.Color.SILVER){
+                    frozenCount++;
+                }
+            }
+//            System.out.println();
+        }
+        if(count == frozenCount){
+            return Board.Color.GOLD;
+        }
+
+        return null;
+    }
+
     public boolean friendlyFigureNear(FigureView fw){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
 
         System.out.println(fw.getFigure().getColor());
+        for(Tile tiles_loc[]:tiles){
+            for (Tile tile : tiles_loc){
+                System.out.print((tile.getFigureView() != null) + " ");
+            }
+            System.out.println();
+        }
 
         if(posX != 0){
             if(tiles[posX-1][posY].getFigureView() != null && tiles[posX-1][posY].getFigureView().getFigure().getColor()
@@ -70,7 +125,26 @@ public class GameScene extends Scene {
     }
 
     private boolean validMove(FigureView fw, Tile tile){
-        return true;
+        int posX = fw.getPosX();
+        int posY = fw.getPosY();
+        System.out.println(fw.getFigure().getColor());
+
+        if(tile.getPosX() == posX + 1 && tile.getPosY() == posY){
+            return true;
+        }
+        if(tile.getPosX() == posX - 1 && tile.getPosY() == posY){
+            return true;
+        }
+        if(tile.getPosY() == posY - 1 && tile.getPosX() == posX &&
+                !(fw.getFigure() instanceof Rabbit && fw.getFigure().getColor() == Board.Color.SILVER)){
+            return true;
+        }
+        if(tile.getPosY() == posY + 1 && tile.getPosX() == posX &&
+                !(fw.getFigure() instanceof Rabbit && fw.getFigure().getColor() == Board.Color.GOLD)){
+            return true;
+        }
+
+        return false;
     }
 
     private EventHandler<DragEvent> onDragOver = e -> {
@@ -220,19 +294,25 @@ public class GameScene extends Scene {
                     public void handle(DragEvent dragEvent) {
                         Dragboard db = dragEvent.getDragboard();
                         System.out.println("exit drag");
-                        t.setFigureView((FigureView) dragEvent.getGestureSource());
-                        ((FigureView) dragEvent.getGestureSource()).setPosX(t.getPosX());
-                        ((FigureView) dragEvent.getGestureSource()).setPosY(t.getPosY());
 //                        t.setFigureView((new ImageView(db.getImage())));
 
-                        dragEvent.setDropCompleted(true);
+                        if(validMove((FigureView) dragEvent.getGestureSource(), t)) {
+                            dragEvent.setDropCompleted(true);
+                            t.setFigureView((FigureView) dragEvent.getGestureSource());
+                            ((FigureView) dragEvent.getGestureSource()).setPosX(t.getPosX());
+                            ((FigureView) dragEvent.getGestureSource()).setPosY(t.getPosY());
 
-                        if((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
-                                (t.getPosX() == 2 || t.getPosX() == 5))){
-                            System.out.println(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
-                            if(!friendlyFigureNear(t.getFigureView())){
-                                t.removeFigure();
+                            if ((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
+                                    (t.getPosX() == 2 || t.getPosX() == 5))) {
+                                System.out.println(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
+                                if (!friendlyFigureNear(t.getFigureView())) {
+                                    t.removeFigure();
+                                }
                             }
+
+                            System.out.println(checkForWin());
+                        } else {
+                            dragEvent.setDropCompleted(false);
                         }
 
                         dragEvent.consume();
