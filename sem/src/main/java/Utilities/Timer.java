@@ -11,7 +11,7 @@ public class Timer {
     /*
     * Timer for every player
     * */
-    private static final int SECONDS = 600;
+    private static final int SECONDS = 10;
 
     public Board.Color getColor() {
         return color;
@@ -19,6 +19,10 @@ public class Timer {
 
     private boolean enabled = false;
     private Board.Color color;
+
+    public long getTime() {
+        return time;
+    }
 
     public boolean isEnabled() {
         return enabled;

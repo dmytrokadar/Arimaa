@@ -65,15 +65,31 @@ public class GameScene extends Scene {
 
     private Board.Color checkForWin(){
 
+        if (timer1.getTime() == 0){
+            timer1.pauseTimer();
+            timer2.pauseTimer();
+            return timer2.getColor();
+        }
+
+        if (timer2.getTime() == 0){
+            timer1.pauseTimer();
+            timer2.pauseTimer();
+            return timer1.getColor();
+        }
+
         for(Tile tilesL[] : tiles){
             Tile tile = tilesL[0];
             if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
                     tile.getFigureView().getFigure().getColor() == Board.Color.GOLD){
+                timer1.pauseTimer();
+                timer2.pauseTimer();
                 return  Board.Color.GOLD;
             }
             tile = tilesL[SIDE_SIZE - 1];
             if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
                     tile.getFigureView().getFigure().getColor() == Board.Color.SILVER){
+                timer1.pauseTimer();
+                timer2.pauseTimer();
                 return  Board.Color.SILVER;
             }
         }
@@ -98,6 +114,8 @@ public class GameScene extends Scene {
         }
 
         if(count == frozenCount){
+            timer1.pauseTimer();
+            timer2.pauseTimer();
             return Board.Color.SILVER;
         }
 
@@ -113,6 +131,8 @@ public class GameScene extends Scene {
 //            System.out.println();
         }
         if(count == frozenCount){
+            timer1.pauseTimer();
+            timer2.pauseTimer();
             return Board.Color.GOLD;
         }
 
@@ -163,6 +183,9 @@ public class GameScene extends Scene {
         int posY = fw.getPosY();
         System.out.println(fw.getFigure().getColor());
 
+        if(board.getPhase() == Board.Phase.END){
+            return false;
+        }
 
         if(board.getPhase() == Board.Phase.EDIT){
             return true;
