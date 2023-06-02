@@ -5,6 +5,8 @@ import Graphics.Tile;
 import Utilities.GameRecorder;
 import Utilities.Timer;
 
+import java.util.logging.Logger;
+
 public class Board {
     public enum Color{
         GOLD,
@@ -20,6 +22,7 @@ public class Board {
     private Phase phase;
     private int moveCount;
     private Color currentColorMove = Color.GOLD;
+    static Logger logger = Logger.getLogger(Board.class.getName());
 
     public Board(){
         Player p1 = new Player();
@@ -86,7 +89,9 @@ public class Board {
                 currentColorMove = Color.GOLD;
 
             moveCount = 0;
-        }
+            logger.info("Move ended, now " + currentColorMove + " moves");
+        } else
+            logger.warning("Move cannot be ended, now " + currentColorMove + " moves");
 
     }
 

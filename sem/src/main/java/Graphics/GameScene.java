@@ -147,6 +147,14 @@ public class GameScene extends Scene {
         int posY = fw.getPosY();
         System.out.println(fw.getFigure().getColor());
 
+        if(board.getPhase() == Board.Phase.EDIT){
+            return true;
+        }
+
+        if(fw.getFigure().getColor() != board.getCurrentColorMove()){
+            return false;
+        }
+
         if(board.getPhase() == Board.Phase.EDIT)
         if(tile.getPosX() == posX + 1 && tile.getPosY() == posY){
             return true;
@@ -320,19 +328,22 @@ public class GameScene extends Scene {
                             ((FigureView) dragEvent.getGestureSource()).setPosX(t.getPosX());
                             ((FigureView) dragEvent.getGestureSource()).setPosY(t.getPosY());
 
-                            if ((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
-                                    (t.getPosX() == 2 || t.getPosX() == 5))) {
-                                System.out.println(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
-                                if (!friendlyFigureNear(t.getFigureView())) {
-                                    t.removeFigure();
+                            if(board.getPhase() != Board.Phase.EDIT){
+                                if ((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
+                                        (t.getPosX() == 2 || t.getPosX() == 5))) {
+                                    System.out.println(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
+                                    if (!friendlyFigureNear(t.getFigureView())) {
+                                        t.removeFigure();
+                                    }
                                 }
-                            }
 
 
-                            Board.Color win = checkForWin();
-                            System.out.println(win + "win");
-                            if(win != null){
-                                board.setPhase(Board.Phase.END);
+                                Board.Color win = checkForWin();
+                                System.out.println(win + "win");
+                                if(win != null){
+                                    board.setPhase(Board.Phase.END);
+                                }
+                                board.increaseMoveCount();
                             }
 
                         } else {
