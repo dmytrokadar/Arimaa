@@ -47,6 +47,8 @@ public class GameScene extends Scene {
     Board board;
     GridPane boardGP;
 
+    boolean rabbitPush = false;
+
     public GameScene(boolean load){
         super(new Pane());
 
@@ -139,17 +141,46 @@ public class GameScene extends Scene {
         return null;
     }
 
+    public Figure.STRENGTH friendlyFigureNear(FigureView fw, Board.Color color){
+        int posX = fw.getPosX();
+        int posY = fw.getPosY();
+
+        if(posX != 0){
+            if(tiles[posX-1][posY].getFigureView() != null && tiles[posX-1][posY].getFigureView().getFigure().getColor()
+                    == color)
+                return tiles[posX-1][posY].getFigureView().getFigure().getStrength();
+        }
+        if(posX != SIDE_SIZE-1){
+            if(tiles[posX+1][posY].getFigureView() != null && tiles[posX+1][posY].getFigureView().getFigure().getColor()
+                    == color)
+                return tiles[posX+1][posY].getFigureView().getFigure().getStrength();
+        }
+
+        if(posY != 0){
+            if(tiles[posX][posY-1].getFigureView() != null && tiles[posX][posY-1].getFigureView().getFigure().getColor()
+                    == color){
+                return tiles[posX][posY-1].getFigureView().getFigure().getStrength();
+            }
+        }
+        if(posY != SIDE_SIZE-1){
+            if(tiles[posX][posY+1].getFigureView() != null && tiles[posX][posY+1].getFigureView().getFigure().getColor()
+                    == color)
+                return tiles[posX][posY+1].getFigureView().getFigure().getStrength();
+        }
+
+        return null;
+    }
+
     public boolean friendlyFigureNear(FigureView fw){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
 
-        System.out.println(fw.getFigure().getColor() + "fFigureNear");
-        for(Tile tiles_loc[]:tiles){
-            for (Tile tile : tiles_loc){
-                System.out.print((tile.getFigureView() != null) + " ");
-            }
-            System.out.println();
-        }
+//        for(Tile tiles_loc[]:tiles){
+//            for (Tile tile : tiles_loc){
+//                System.out.print((tile.getFigureView() != null) + " ");
+//            }
+//            System.out.println();
+//        }
 
         if(posX != 0){
             if(tiles[posX-1][posY].getFigureView() != null && tiles[posX-1][posY].getFigureView().getFigure().getColor()
@@ -165,7 +196,6 @@ public class GameScene extends Scene {
         if(posY != 0){
             if(tiles[posX][posY-1].getFigureView() != null && tiles[posX][posY-1].getFigureView().getFigure().getColor()
                     == fw.getFigure().getColor()){
-                System.out.println(fw.getFigure().getColor() + " " + tiles[posX][posY-1].getFigureView().getFigure().getColor());
                 return true;
             }
         }
@@ -181,6 +211,7 @@ public class GameScene extends Scene {
     private boolean validMove(FigureView fw, Tile tile){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
+
         System.out.println(fw.getFigure().getColor());
 
         if(board.getPhase() == Board.Phase.END){
@@ -198,8 +229,14 @@ public class GameScene extends Scene {
         }
 
         if(fw.getFigure().getColor() != board.getCurrentColorMove()){
-            return false;
+            rabbitPush = true;
+            if (fw.getFigure().getStrength().getValue()
+                    >= friendlyFigureNear(fw, board.getCurrentColorMove()).getValue()){
+                return false;
+            }
         }
+
+
 
         if(tile.getPosX() == posX + 1 && tile.getPosY() == posY){
             return true;
@@ -208,11 +245,13 @@ public class GameScene extends Scene {
             return true;
         }
         if(tile.getPosY() == posY - 1 && tile.getPosX() == posX &&
-                !(fw.getFigure() instanceof Rabbit && fw.getFigure().getColor() == Board.Color.SILVER)){
+                (!(fw.getFigure() instanceof Rabbit && fw.getFigure().getColor() == Board.Color.SILVER) || rabbitPush)){
+            rabbitPush = false;
             return true;
         }
         if(tile.getPosY() == posY + 1 && tile.getPosX() == posX &&
-                !(fw.getFigure() instanceof Rabbit && fw.getFigure().getColor() == Board.Color.GOLD)){
+                (!(fw.getFigure() instanceof Rabbit && fw.getFigure().getColor() == Board.Color.GOLD) || rabbitPush)){
+            rabbitPush = false;
             return true;
         }
 

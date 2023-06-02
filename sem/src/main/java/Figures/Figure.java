@@ -24,7 +24,7 @@ public abstract class Figure {
             this.value = value;
         }
 
-        private int getValue(){
+        public int getValue(){
             return value;
         }
     }
@@ -83,5 +83,9 @@ public abstract class Figure {
 
     public boolean isFrozen() {
         return isFrozen;
+    }
+
+    public STRENGTH getStrength() {
+        return strength;
     }
 }
