@@ -9,7 +9,7 @@ public class Timer {
     /*
     * Timer for every player
     * */
-    private static final int SECONDS = 600;
+    public static final int SECONDS = 600;
 
     public Board.Color getColor() {
         return color;
@@ -30,8 +30,8 @@ public class Timer {
     private long enabledStartTime = 0;
 
 
-    public Timer(Board.Color color) {
-        time = SECONDS;
+    public Timer(Board.Color color, int time) {
+        this.time = time;
         this.color = color;
     }
 

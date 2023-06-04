@@ -30,4 +30,12 @@ public class Rabbit extends Figure{
         this.color = color;
         isFrozen = false;
     }
+
+    @Override
+    public String toString() {
+        if(color == Board.Color.GOLD){
+            return "R";
+        }
+        return "r";
+    }
 }

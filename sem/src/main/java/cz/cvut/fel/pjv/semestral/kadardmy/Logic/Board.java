@@ -22,11 +22,12 @@ public class Board {
     private int moveCount;
     private Color currentColorMove = Color.GOLD;
     public static Logger logger = Logger.getLogger(Board.class.getName());
+    private GameRecorder gameRecorder;
 
     public Board(){
         Player p1 = new Player();
         AI ai = new AI();
-        GameRecorder gameRecorder = new GameRecorder();
+        gameRecorder = new GameRecorder();
 
         phase = Phase.EDIT;
         // init figures
@@ -107,5 +108,9 @@ public class Board {
 
     public Color getCurrentColorMove() {
         return currentColorMove;
+    }
+
+    public void setCurrentColorMove(Color currentColorMove) {
+        this.currentColorMove = currentColorMove;
     }
 }

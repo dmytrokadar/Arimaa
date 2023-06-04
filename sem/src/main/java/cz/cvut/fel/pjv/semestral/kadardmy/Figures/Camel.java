@@ -30,4 +30,12 @@ public class Camel extends Figure{
         this.color = color;
         isFrozen = false;
     }
+
+    @Override
+    public String toString() {
+        if(color == Board.Color.GOLD){
+            return "M";
+        }
+        return "m";
+    }
 }

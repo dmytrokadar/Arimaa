@@ -3,6 +3,7 @@ package cz.cvut.fel.pjv.semestral.kadardmy.Graphics;
 import cz.cvut.fel.pjv.semestral.kadardmy.Figures.*;
 import cz.cvut.fel.pjv.semestral.kadardmy.Logic.Board;
 import cz.cvut.fel.pjv.semestral.kadardmy.MainWindow.MainWindow;
+import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.GameRecorder;
 import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.Timer;
 import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.UpdateTime;
 import javafx.application.Platform;
@@ -23,6 +24,7 @@ import javafx.scene.text.Font;
 import static cz.cvut.fel.pjv.semestral.kadardmy.Logic.Board.logger;
 import static cz.cvut.fel.pjv.semestral.kadardmy.MainWindow.MainWindow.SIDE_SIZE;
 import static cz.cvut.fel.pjv.semestral.kadardmy.MainWindow.MainWindow.TILE_SIZE;
+import static cz.cvut.fel.pjv.semestral.kadardmy.Utilities.Timer.SECONDS;
 
 
 public class GameScene extends Scene {
@@ -40,6 +42,7 @@ public class GameScene extends Scene {
     Pane pane;
     BorderPane infoPane;
     Board board;
+    GameRecorder gameRecorder;
     GridPane boardGP;
 
     boolean rabbitPush = false;
@@ -60,9 +63,18 @@ public class GameScene extends Scene {
         pane.getChildren().add(boardGP);
         createPane();
 
+        gameRecorder = new GameRecorder();
+
         populateBoard(load);
 
         board = new Board();
+    }
+
+    public Tile getRandomMove(){
+        // TODO вибрати рандомну кількість ходу
+        //  вибирати рандомний тайл з фігурков, якшо мош ходити то гуд, якшо нє то інший узяти
+
+        return tiles[0][0];
     }
 
     public Board.Color checkForWin(){
@@ -565,10 +577,10 @@ public class GameScene extends Scene {
         whoMoves.setFont(Font.font("Impact", 30));
         whoMoves.setAlignment(Pos.CENTER_LEFT);
 
-        timer1 = new Timer(Board.Color.GOLD);
+        timer1 = new Timer(Board.Color.GOLD, SECONDS);
         timer1.getProperty().addListener(new UpdateTime(time2));
 
-        timer2 = new Timer(Board.Color.SILVER);
+        timer2 = new Timer(Board.Color.SILVER, SECONDS);
         timer2.getProperty().addListener(new UpdateTime(time1));
 
 
@@ -613,9 +625,16 @@ public class GameScene extends Scene {
 
         Button forward = new Button("->");
         Button backward = new Button("<-");
+        Button saveGame = new Button("Save Game");
+        saveGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                gameRecorder.getCurrentGameState(tiles, timer1.getTime(), timer2.getTime(), board.getCurrentColorMove());
+            }
+        });
 
         HBox buttons = new HBox(10, backward, start, forward);
-        HBox downButtons = new HBox(20, exit, endMove);
+        HBox downButtons = new HBox(20, exit, saveGame, endMove);
         buttons.setAlignment(Pos.CENTER);
         downButtons.setAlignment(Pos.CENTER);
 

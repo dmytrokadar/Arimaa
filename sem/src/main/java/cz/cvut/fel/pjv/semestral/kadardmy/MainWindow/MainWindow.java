@@ -41,6 +41,7 @@ public class MainWindow extends Application{
         stage.maxWidthProperty().bind(stage.heightProperty().multiply(1.7));
 
         Button newGame = new Button("New Game");
+        Button loadGame = new Button("Load Game");
         Button exit = new Button("Exit");
 
         Label title = new Label("Arimaa");
@@ -60,6 +61,16 @@ public class MainWindow extends Application{
 //                stage.show();
 
                 Scene scene = new GameScene(false);
+                stage.setScene(scene);
+                stage.setTitle("Arimaa");
+                stage.show();
+            }
+        });
+
+        loadGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Scene scene = new GameScene(true);
                 stage.setScene(scene);
                 stage.setTitle("Arimaa");
                 stage.show();
