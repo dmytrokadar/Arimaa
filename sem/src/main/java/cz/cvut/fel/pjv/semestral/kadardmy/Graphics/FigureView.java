@@ -27,6 +27,14 @@ public class FigureView extends ImageView {
         this.figure = figure;
     }
 
+    /**
+     * Class that binds Tiles with cz.cvut.fel.pjv.semestral.kadardmy.Figures, contains Figure image
+     *
+     * @param image - image to draw on screen
+     * @param posX - position on board X
+     * @param posY - position on board Y
+     * @param figure - figure
+     * */
     public FigureView(Image image, int posX, int posY, Figure figure) {
         super(image);
         this.posX = posX;

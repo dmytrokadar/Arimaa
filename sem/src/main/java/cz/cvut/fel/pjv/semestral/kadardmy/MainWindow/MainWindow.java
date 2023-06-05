@@ -37,6 +37,12 @@ public class MainWindow extends Application{
 
     private Stage stage;
 
+    /**
+     * Open window with game
+     *
+     * @param aiG - is Golden player AI
+     * @param aiS - is Silver player AI
+     * */
     public void startGame(boolean aiG, boolean aiS){
         Scene scene = new GameScene(false, aiG, aiS);
         stage.setScene(scene);

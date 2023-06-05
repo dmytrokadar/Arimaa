@@ -9,6 +9,11 @@ public class UpdateTime implements ChangeListener<String> {
 
     Label timeG;
 
+    /**
+     * Updating time in label
+     *
+     * @param timeL - label to update
+     * */
     public UpdateTime(Label timeL){
         timeG = timeL;
     }

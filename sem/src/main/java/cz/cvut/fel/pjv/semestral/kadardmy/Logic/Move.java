@@ -11,6 +11,10 @@ public class Move {
     private final Board.Color color;
     private final int moveCount;
 
+    /**
+     * Contains move details
+     *
+     * */
     public Move(Figure figure, int posXFrom, int posYFrom, int posXTo, int posYTo, Board.Color color, int moveCount) {
         this.figure = figure;
         this.posXFrom = posXFrom;

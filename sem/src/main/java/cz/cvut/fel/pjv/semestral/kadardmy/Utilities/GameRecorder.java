@@ -25,18 +25,30 @@ public class GameRecorder {
     private static List<Character> lettersList = Arrays.asList(letters);
     private static List<Integer> numbersList = Arrays.asList(numbers);
 
+    /**
+     * Converts coordinates X to Arimaa notation
+     * */
     public static char intToString(int n){
         return letters[n];
     }
 
+    /**
+     * Converts coordinates Y to Arimaa notation
+     * */
     public static int intToPos(int n){
         return numbers[n];
     }
 
+    /**
+     * Converts character back to coordinates
+     * */
     public static int stringToInt(Character c){
         return lettersList.indexOf(c);
     }
 
+    /**
+     * Converts int back to coordinates
+     * */
     public static int posToInt(int n){
         return numbersList.indexOf(n);
     }
@@ -125,6 +137,11 @@ public class GameRecorder {
 
     }
 
+    /**
+     * Converts string to Board.Color value
+     *
+     * @param str - color in string
+     * */
     public static Board.Color stringToColor(String str){
         if(str.equals("SILVER")){
             return Board.Color.SILVER;
@@ -133,6 +150,9 @@ public class GameRecorder {
         return Board.Color.GOLD;
     }
 
+    /**
+     * Reads save state from file
+     * */
     public static BoardState readFromFileFile(){
         BoardState boardState = null;
         try {
@@ -183,6 +203,13 @@ public class GameRecorder {
         return null;
     }
 
+    /**
+    * Writes save information to file
+     *
+     * @param tiles - array of all tiles
+     * @param time1 - time of Golden player
+     * @param time2 - time of Silver player
+    * */
     public static String getCurrentGameState(Tile tiles[][], long time1, long time2, Board.Color color){
         StringBuilder ret = new StringBuilder();
 

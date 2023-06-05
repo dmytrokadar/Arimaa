@@ -105,12 +105,20 @@ public class GameScene extends Scene {
 
     }
 
+    /**
+     * Tries to move figure
+     *
+     * @param fw - figure to move
+     * @param t - tile to move to
+     * @param tileSource - tile to move from
+     * */
     private boolean tryMove(FigureView fw, Tile t, Tile tileSource) {
         if (validMove(fw, t)) {
             if(tileSource == null)
                 tileSource = tiles[fw.getPosX()][fw.getPosY()];
             FigureView fwTarget = t.getFigureView();
             if (fwTarget != null) {
+                //swap figures
                 tileSource.removeFigure();
                 tileSource.setFigureView(fwTarget);
                 fwTarget.setPosX(tileSource.getPosX());
@@ -122,6 +130,7 @@ public class GameScene extends Scene {
             }
             Move move = new Move(fw.getFigure(), fw.getPosX(), fw.getPosY(), t.getPosX(), t.getPosY(), board.getCurrentColorMove(), board.getMoveCount());
 
+            //move figure to another tile
             t.removeFigure();
             t.setFigureView(fw);
             fw.setPosX(t.getPosX());
@@ -137,6 +146,7 @@ public class GameScene extends Scene {
                     }
                 }
 
+                //set history movement availability
                 if (moveHolder.canGoForward()) {
                     moveHolder.removeLastMoves();
                     if (board.getCurrentColorMove() == timer1.getColor()) {
@@ -154,6 +164,7 @@ public class GameScene extends Scene {
                 Board.Color win = checkForWin();
 //                                logger.info(win + "win");
                 if (win != null) {
+                    //ends game
                     board.setPhase(Board.Phase.END);
                     gameState.setText(win + " WIN!!!!!!!");
                 }
@@ -172,14 +183,19 @@ public class GameScene extends Scene {
         return false;
     }
 
+    /**
+     * Makes random move, AI substitution
+     *
+     * */
     public void getRandomMove(){
+        //returns if it is not AI turn
         if(!((board.getCurrentColorMove() == Board.Color.GOLD && aiGOld) || (board.getCurrentColorMove() == Board.Color.SILVER && aiSilver))){
             return;
         }
 
         int moveCount = ThreadLocalRandom.current().nextInt(1, 5);
         Board.Color tmpColor = board.getCurrentColorMove();
-
+        //genenrates from 1 to 4 moves
         for (int i = 0; i < moveCount; i++){
             boolean done = false;
             int ind = ThreadLocalRandom.current().nextInt(figuresList.size()) % figuresList.size();
@@ -191,6 +207,7 @@ public class GameScene extends Scene {
             int failed = 0;
 
             while (!done){
+                // generates moves until satisfied
                 if(failed > 3){
                     ind = ThreadLocalRandom.current().nextInt(figuresList.size()) % figuresList.size();
                     fw = figuresList.get(ind);
@@ -205,6 +222,7 @@ public class GameScene extends Scene {
                     Tile tile = tiles[posX + dir[0]][posY + dir[1]];
                     if(tile.getFigureView() == null){
                         if(tryMove(fw, tile, null)){
+                            //if move made, can go further
                             done = true;
                         }
 
@@ -222,6 +240,10 @@ public class GameScene extends Scene {
         }
     }
 
+    /**
+     * Check if game is ended
+     *
+     * */
     public Board.Color checkForWin(){
 
         if (timer1.getTime() == 0){
@@ -237,6 +259,7 @@ public class GameScene extends Scene {
         }
 
         for(Tile tilesL[] : tiles){
+            //checks all tiles for win
             Tile tile = tilesL[0];
             if(tile.getFigureView() != null && tile.getFigureView().getFigure() instanceof Rabbit &&
                     tile.getFigureView().getFigure().getColor() == Board.Color.GOLD){
@@ -284,15 +307,16 @@ public class GameScene extends Scene {
         count = 0;
         frozenCount = 0;
         for(Tile tiles_loc[]:tiles){
+            // checks if all tiles are frozen
             for (Tile tile : tiles_loc){
                 count++;
                 if (tile.getFigureView() != null && tile.getFigureView().getFigure().getColor() == Board.Color.SILVER){
                     frozenCount++;
                 }
             }
-//            System.out.println();
         }
         if(count == frozenCount){
+            // game is ended if all fiigures are frozen
             timer1.pauseTimer();
             timer2.pauseTimer();
             return Board.Color.GOLD;
@@ -303,12 +327,16 @@ public class GameScene extends Scene {
 
     /**
      * Gets the biggest strengths from nearest figures of needed color
+     *
+     * @param fw - figure to check
+     * @param color - color to check
      * */
     public Figure.STRENGTH friendlyFigureNear(FigureView fw, Board.Color color){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
         Figure.STRENGTH maxS = null;
 
+        //find max strength in adjacent tiles
         if(posX != 0){
             if(tiles[posX-1][posY].getFigureView() != null && tiles[posX-1][posY].getFigureView().getFigure().getColor()
                     == color)
@@ -344,6 +372,13 @@ public class GameScene extends Scene {
 
     /**
      * Returns true if figure can be pulled
+     *
+     * @param fw - figure to check
+     * @param posXTile - Tile of figure X
+     * @param posYTile - Tile of figure Y
+     * @param posXTileDesired - desired tile X
+     * @param posYTileDesired - desired tile Y
+     * @param tileStrength - strength of figure that is mowing fw
      * */
     public boolean friendlyFigureNearPull(FigureView fw,
                                           int posXTile, int posYTile,
@@ -356,6 +391,11 @@ public class GameScene extends Scene {
         return false;
     }
 
+    /**
+     * Checks if figure is freesed
+     *
+     * @param fw - figure to check
+     * */
     public boolean checkIsFreesed(FigureView fw){
         Board.Color color = fw.getFigure().getColor();
         if(color == Board.Color.GOLD){
@@ -372,6 +412,11 @@ public class GameScene extends Scene {
         return false;
     }
 
+    /**
+     * Checks if friendly figure is in adjacent tiles
+     *
+     * @param fw - figure to check
+     * */
     public boolean friendlyFigureNear(FigureView fw){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
@@ -382,7 +427,7 @@ public class GameScene extends Scene {
 //            }
 //            System.out.println();
 //        }
-
+        //check adjacent tiles
         if(posX != 0){
             if(tiles[posX-1][posY].getFigureView() != null && tiles[posX-1][posY].getFigureView().getFigure().getColor()
                 == fw.getFigure().getColor())
@@ -409,6 +454,12 @@ public class GameScene extends Scene {
         return false;
     }
 
+    /**
+     * Checks if move is valid
+     *
+     * @param fw - figure to check
+     * @param tile - tile to check
+     * */
     private boolean validMove(FigureView fw, Tile tile){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
@@ -432,7 +483,7 @@ public class GameScene extends Scene {
 
         if(fw.getFigure().getColor() != board.getCurrentColorMove()){
             rabbitPush = true;
-
+            // checks if enemy figure can be moved
             Figure.STRENGTH tmp = friendlyFigureNear(fw, board.getCurrentColorMove());
             if(tmp == null){
                 Move move = moveHolder.getCurrentMove();
@@ -455,8 +506,7 @@ public class GameScene extends Scene {
             return false;
         }
 
-
-
+        // checks if tile can be accessed
         if(tile.getPosX() == posX + 1 && tile.getPosY() == posY){
             return true;
         }
@@ -477,6 +527,10 @@ public class GameScene extends Scene {
         return false;
     }
 
+    /**
+     * DragOver event for tile
+     *
+     * */
     private EventHandler<DragEvent> onDragOver = e -> {
         if(e.getSource() != e.getGestureSource()){
             e.acceptTransferModes(TransferMode.MOVE);
@@ -486,10 +540,18 @@ public class GameScene extends Scene {
         e.consume();
     };
 
+    /**
+     * DragDone event for tile
+     *
+     * */
     private EventHandler<DragEvent> onDragDone = e -> {
 //        ((Tile)e.getSource()).removeFigure();
     };
 
+    /**
+     * DragDetected event for figure
+     *
+     * */
     private EventHandler<MouseEvent> onDragDetectedFigure = e ->{
         // inspiration https://docs.oracle.com/javafx/2/drag_drop/jfxpub-drag_drop.htm
             Dragboard db = ((FigureView)e.getSource()).startDragAndDrop(TransferMode.MOVE);
@@ -502,6 +564,10 @@ public class GameScene extends Scene {
             e.consume();
     };
 
+    /**
+     * DragDropped event for figure
+     *
+     * */
     private EventHandler<DragEvent> setOnDragDroppedFigure = e -> {
             Dragboard db = e.getDragboard();
             logger.info("exit drag");
@@ -517,6 +583,12 @@ public class GameScene extends Scene {
         return new Camel(Board.Color.GOLD);
     }
 
+    /**
+     * Populates board with figures
+     *
+     * @param load false - generate positions
+     *             true - load positions from file
+     */
     private void populateBoard(boolean load){
         // init figures
         // first phase will be as in original game client - figures are already on board,
@@ -526,6 +598,7 @@ public class GameScene extends Scene {
         if(!load || boardState == null){
             for (int i = 0; i < SIDE_SIZE; i++){
                 for (int j = 0; j < SIDE_SIZE; j++){
+                    // populate tiles with figures
                     if(i == SIDE_SIZE - 2){
                         fw = new FigureView(new Image("Textures/rabbit_g.png"), j, i, new Rabbit(Board.Color.GOLD));
                         fw.setOnDragDetected(onDragDetectedFigure);
@@ -617,6 +690,7 @@ public class GameScene extends Scene {
             String[] moves = boardState.getMoves();
 
             for(String move : moves){
+                //parse moves to positions
                 figureL = move.charAt(0);
                 posX = GameRecorder.posToInt(Character.getNumericValue(move.charAt(2)));
                 posY = GameRecorder.stringToInt(move.charAt(1));
@@ -632,13 +706,18 @@ public class GameScene extends Scene {
         }
     }
 
-    GridPane createBoard(){
+    /**
+     * Creates board
+     *
+     * */
+    private GridPane createBoard(){
         GridPane gp = new GridPane();
         final Image im = new Image("Textures/camel_g.png");
         final FigureView imageView = new FigureView(im, 0, 0, new Camel(Board.Color.GOLD, 0, 0));
 
         for (int i = 0; i < SIDE_SIZE; i++){
             for (int j = 0; j < SIDE_SIZE; j++){
+                // create board tiles
                 Rectangle r = new Rectangle(TILE_SIZE, TILE_SIZE, Color.WHITE);
                 if((i == 2 && (j == 2 || j == 5)) || (i == 5 && (j == 2 || j == 5))){
                     r.setFill(Color.GREEN);
@@ -655,6 +734,7 @@ public class GameScene extends Scene {
 //                        t.setFigureView((new ImageView(db.getImage())));
                         Board.Color tmpColor = board.getCurrentColorMove();
 
+                        // figure move functionality
                         if(tryMove((FigureView) dragEvent.getGestureSource(), t, (Tile) ((FigureView) dragEvent.getGestureSource()).getParent())){
                             dragEvent.setDropCompleted(true);
                             if (isAi && board.getCurrentColorMove() != tmpColor) {
@@ -669,7 +749,6 @@ public class GameScene extends Scene {
                 });
                 t.setOnDragDone(onDragDone);
                 tiles[j][i] = t;
-                //TODO mb j i i pominyaty mistamy
                 gp.add(t, j, i);
             }
         }
@@ -716,6 +795,10 @@ public class GameScene extends Scene {
         return gp;
     }
 
+    /**
+     * Ends turn
+     *
+     * */
     private void endOfTurn(){
         board.endMove();
         whoMoves.setText(board.getCurrentColorMove() + " Moves");
@@ -728,6 +811,11 @@ public class GameScene extends Scene {
         }
     }
 
+    /**
+     * Creates pane with buttons and information
+     *
+     *
+     * */
     private void createPane(){
         infoPane = new BorderPane();
         infoPane.layoutXProperty().bind(boardGP.widthProperty());
@@ -807,6 +895,7 @@ public class GameScene extends Scene {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if(moveHolder.canGoForward()){
+                    // move history forward
                     moveHolder.goForward();
                     Move move = moveHolder.getCurrentMove();
                     FigureView fw = tiles[move.getPosXFrom()][move.getPosYFrom()].getFigureView();
@@ -837,6 +926,7 @@ public class GameScene extends Scene {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if(moveHolder.canGoBack()){
+                    // move history backward
                     Move move = moveHolder.getCurrentMove();
                     FigureView fw = tiles[move.getPosXTo()][move.getPosYTo()].getFigureView();
 

@@ -6,6 +6,14 @@ public class BoardState {
     private long time2;
     private Board.Color color;
 
+    /**
+     * State of the board to save and load
+     *
+     * @param moves - array of figures positions
+     * @param time1 - time for Gold player
+     * @param time2 - time for Silver player
+     * @param color - color of current move
+     * */
     public BoardState(String[] moves, long time1, long time2, Board.Color color) {
         this.moves = moves;
         this.time1 = time1;

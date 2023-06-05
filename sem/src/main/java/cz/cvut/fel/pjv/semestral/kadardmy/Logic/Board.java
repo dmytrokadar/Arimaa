@@ -7,6 +7,10 @@ import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.Timer;
 import java.util.logging.Logger;
 
 public class Board {
+    /**
+     * Game logic
+     *
+     * */
     public enum Color{
         GOLD,
         SILVER
@@ -77,6 +81,11 @@ public class Board {
         this.moveCount = moveCount;
     }
 
+    /**
+     * Increases move count until it reaches 4, then
+     * ends move
+     *
+     * */
     public void increaseMoveCount(){
         moveCount++;
         if(moveCount > 3){
@@ -84,6 +93,10 @@ public class Board {
         }
     }
 
+    /**
+     * Ends players move and gives it to another player
+     *
+    * */
     public void endMove(){
         if(moveCount > 0){
             if(currentColorMove == Color.GOLD)
@@ -98,6 +111,11 @@ public class Board {
 
     }
 
+    /**
+     * Sets game phase
+     *
+     * @param phase - phase to set
+     * */
     public void setPhase(Phase phase) {
         this.phase = phase;
     }
