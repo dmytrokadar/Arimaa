@@ -63,6 +63,8 @@ public class GameScene extends Scene {
 
     private boolean aiGOld;
     private boolean aiSilver;
+    private boolean isAi = false;
+    private boolean allAI = false;
 
     boolean rabbitPush = false;
 
@@ -73,8 +75,14 @@ public class GameScene extends Scene {
      * */
     public GameScene(boolean load, boolean aiGOld, boolean aiSilver){
         super(new Pane());
+
         this.aiGOld = aiGOld;
         this.aiSilver = aiSilver;
+        if(aiGOld || aiSilver)
+            isAi = true;
+
+        if(aiGOld && aiSilver)
+            allAI = true;
 
         pane = (Pane) this.getRoot();
 
@@ -97,18 +105,120 @@ public class GameScene extends Scene {
 
     }
 
-    public Tile getRandomMove(){
-        // TODO вибрати рандомну кількість ходу
-        //  вибирати рандомний тайл з фігурков, якшо мош ходити то гуд, якшо нє то інший узяти
-        int moveCount = ThreadLocalRandom.current().nextInt(1, 5);
-        for (int i = 0; i < moveCount; i++){
-            int ind = ThreadLocalRandom.current().nextInt(figuresList.size()) /*% figuresList.size()*/;
-            FigureView fw = figuresList.get(ind);
+    private boolean tryMove(FigureView fw, Tile t, Tile tileSource) {
+        if (validMove(fw, t)) {
+            if(tileSource == null)
+                tileSource = tiles[fw.getPosX()][fw.getPosY()];
+            FigureView fwTarget = t.getFigureView();
+            if (fwTarget != null) {
+                tileSource.removeFigure();
+                tileSource.setFigureView(fwTarget);
+                fwTarget.setPosX(tileSource.getPosX());
+                fwTarget.setPosY(tileSource.getPosY());
+                logger.info("swapped " + t.getPosX() + " " + t.getPosY() + " " +
+                        tileSource.getPosX() + " " + tileSource.getPosY());
+            } else {
+                tileSource.removeFigure();
+            }
+            Move move = new Move(fw.getFigure(), fw.getPosX(), fw.getPosY(), t.getPosX(), t.getPosY(), board.getCurrentColorMove(), board.getMoveCount());
+
+            t.removeFigure();
+            t.setFigureView(fw);
+            fw.setPosX(t.getPosX());
+            fw.setPosY(t.getPosY());
 
 
+            if (board.getPhase() != Board.Phase.EDIT) {
+                if ((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
+                        (t.getPosX() == 2 || t.getPosX() == 5))) {
+                    logger.info(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
+                    if (!friendlyFigureNear(t.getFigureView())) {
+                        t.removeFigure();
+                    }
+                }
+
+                if (moveHolder.canGoForward()) {
+                    moveHolder.removeLastMoves();
+                    if (board.getCurrentColorMove() == timer1.getColor()) {
+                        timer2.pauseTimer();
+                        timer1.startTimer();
+                    } else {
+                        timer1.pauseTimer();
+                        timer2.startTimer();
+                    }
+                }
+                moveHolder.appendMove(move);
+                backward.setDisable(false);
+
+                Board.Color win = checkForWin();
+//                                logger.info(win + "win");
+                if (win != null) {
+                    board.setPhase(Board.Phase.END);
+                    gameState.setText(win + " WIN!!!!!!!");
+                }
+                board.increaseMoveCount();
+                whoMoves.setText(board.getCurrentColorMove() + " Moves");
+                if (board.getCurrentColorMove() == timer1.getColor()) {
+                    timer2.pauseTimer();
+                    timer1.startTimer();
+                } else {
+                    timer1.pauseTimer();
+                    timer2.startTimer();
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void getRandomMove(){
+        if(!((board.getCurrentColorMove() == Board.Color.GOLD && aiGOld) || (board.getCurrentColorMove() == Board.Color.SILVER && aiSilver))){
+            return;
         }
 
-        return tiles[0][0];
+        int moveCount = ThreadLocalRandom.current().nextInt(1, 5);
+        Board.Color tmpColor = board.getCurrentColorMove();
+
+        for (int i = 0; i < moveCount; i++){
+            boolean done = false;
+            int ind = ThreadLocalRandom.current().nextInt(figuresList.size()) % figuresList.size();
+
+            FigureView fw = figuresList.get(ind);
+            int posX = fw.getPosX();
+            int posY = fw.getPosY();
+
+            int failed = 0;
+
+            while (!done){
+                if(failed > 3){
+                    ind = ThreadLocalRandom.current().nextInt(figuresList.size()) % figuresList.size();
+                    fw = figuresList.get(ind);
+                    posX = fw.getPosX();
+                    posY = fw.getPosY();
+                }
+
+                int dirInd = ThreadLocalRandom.current().nextInt(DIRECTIONS.length);
+                int[] dir = DIRECTIONS[dirInd];
+
+                if(((dir[0] + posX >= 0 && dir[0] + posX < SIDE_SIZE) && (dir[1] + posY >= 0 && dir[1] + posY < SIDE_SIZE))){
+                    Tile tile = tiles[posX + dir[0]][posY + dir[1]];
+                    if(tile.getFigureView() == null){
+                        if(tryMove(fw, tile, null)){
+                            done = true;
+                        }
+
+                    }
+                }
+
+                failed++;
+            }
+        }
+
+        if(tmpColor == board.getCurrentColorMove())
+            endOfTurn();
+        if(tmpColor != board.getCurrentColorMove() && allAI){
+            getRandomMove();
+        }
     }
 
     public Board.Color checkForWin(){
@@ -301,8 +411,6 @@ public class GameScene extends Scene {
     private boolean validMove(FigureView fw, Tile tile){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
-
-        getRandomMove();
 //
 //        System.out.println(fw.getFigure().getColor());
         fw.getFigure().setFrozen(checkIsFreesed(fw));
@@ -544,71 +652,13 @@ public class GameScene extends Scene {
                         Dragboard db = dragEvent.getDragboard();
                         logger.info("exit drag");
 //                        t.setFigureView((new ImageView(db.getImage())));
+                        Board.Color tmpColor = board.getCurrentColorMove();
 
-                        if(validMove((FigureView) dragEvent.getGestureSource(), t)) {
+                        if(tryMove((FigureView) dragEvent.getGestureSource(), t, (Tile) ((FigureView) dragEvent.getGestureSource()).getParent())){
                             dragEvent.setDropCompleted(true);
-                            FigureView fw = ((FigureView) dragEvent.getGestureSource());
-
-
-                            Tile tileSource = (Tile)fw.getParent();
-                            FigureView fwTarget = t.getFigureView();
-                            if(fwTarget != null){
-                                tileSource.removeFigure();
-                                tileSource.setFigureView(fwTarget);
-                                fwTarget.setPosX(tileSource.getPosX());
-                                fwTarget.setPosY(tileSource.getPosY());
-                                logger.info("swapped "+ t.getPosX()  + " " + t.getPosY() + " " +
-                                        tileSource.getPosX() + " " + tileSource.getPosY());
-                            } else {
-                                tileSource.removeFigure();
+                            if (isAi && board.getCurrentColorMove() != tmpColor) {
+                                getRandomMove();
                             }
-                            Move move = new Move(fw.getFigure(), fw.getPosX(), fw.getPosY(), t.getPosX(), t.getPosY(), board.getCurrentColorMove(), board.getMoveCount());
-
-                            t.removeFigure();
-                            t.setFigureView(fw);
-                            fw.setPosX(t.getPosX());
-                            fw.setPosY(t.getPosY());
-
-
-                            if(board.getPhase() != Board.Phase.EDIT){
-                                if ((t.getPosY() == 2 && (t.getPosX() == 2 || t.getPosX() == 5)) || (t.getPosY() == 5 &&
-                                        (t.getPosX() == 2 || t.getPosX() == 5))) {
-                                    logger.info(t.getFigureView().getFigure().getColor() + " " + t.getFigureView().getPosY() + " " + t.getFigureView().getPosX());
-                                    if (!friendlyFigureNear(t.getFigureView())) {
-                                        t.removeFigure();
-                                    }
-                                }
-
-                                if(moveHolder.canGoForward()){
-                                    moveHolder.removeLastMoves();
-                                    if(board.getCurrentColorMove() == timer1.getColor()){
-                                        timer2.pauseTimer();
-                                        timer1.startTimer();
-                                    } else {
-                                        timer1.pauseTimer();
-                                        timer2.startTimer();
-                                    }
-                                }
-                                moveHolder.appendMove(move);
-                                backward.setDisable(false);
-
-                                Board.Color win = checkForWin();
-                                logger.info(win + "win");
-                                if(win != null){
-                                    board.setPhase(Board.Phase.END);
-                                    gameState.setText(win + " WIN!!!!!!!");
-                                }
-                                board.increaseMoveCount();
-                                whoMoves.setText(board.getCurrentColorMove() + " Moves");
-                                if(board.getCurrentColorMove() == timer1.getColor()){
-                                    timer2.pauseTimer();
-                                    timer1.startTimer();
-                                } else {
-                                    timer1.pauseTimer();
-                                    timer2.startTimer();
-                                }
-                            }
-
                         } else {
                             dragEvent.setDropCompleted(false);
                         }
@@ -665,6 +715,18 @@ public class GameScene extends Scene {
         return gp;
     }
 
+    private void endOfTurn(){
+        board.endMove();
+        whoMoves.setText(board.getCurrentColorMove() + " Moves");
+        if(board.getCurrentColorMove() == timer1.getColor()){
+            timer2.pauseTimer();
+            timer1.startTimer();
+        } else {
+            timer1.pauseTimer();
+            timer2.startTimer();
+        }
+    }
+
     private void createPane(){
         infoPane = new BorderPane();
         infoPane.layoutXProperty().bind(boardGP.widthProperty());
@@ -703,10 +765,16 @@ public class GameScene extends Scene {
                 board.setPhase(Board.Phase.GAME);
                 gameState.setText("Game");
                 start.setDisable(true);
+
+
                 if(board.getCurrentColorMove() == timer1.getColor()){
                     timer1.startTimer();
                 } else {
                     timer2.startTimer();
+                }
+
+                if(aiGOld){
+                    getRandomMove();
                 }
             }
         });
@@ -723,14 +791,12 @@ public class GameScene extends Scene {
         endMove.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                board.endMove();
-                whoMoves.setText(board.getCurrentColorMove() + " Moves");
-                if(board.getCurrentColorMove() == timer1.getColor()){
-                    timer2.pauseTimer();
-                    timer1.startTimer();
-                } else {
-                    timer1.pauseTimer();
-                    timer2.startTimer();
+                Board.Color tmpColor = board.getCurrentColorMove();
+
+                endOfTurn();
+
+                if(isAi && board.getCurrentColorMove() != tmpColor){
+                    getRandomMove();
                 }
             }
         });

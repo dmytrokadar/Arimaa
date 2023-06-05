@@ -41,6 +41,13 @@ public class GameRecorder {
         return numbersList.indexOf(n);
     }
 
+    /**
+     * Converts character from save file to Figure
+     *
+     * @param c - character
+     * @param posX - X position of figure
+     * @param posY - Y position of figure
+     * */
     public static Figure stringToFigure(Character c, int posX, int posY){
         Board.Color color = Board.Color.GOLD;
 
@@ -67,6 +74,9 @@ public class GameRecorder {
         return null;
     }
 
+    /**
+     * Constructor
+     * */
     public GameRecorder(){
         lettersList = Arrays.asList(letters);
         numbersList = Arrays.asList(numbers);
@@ -88,6 +98,11 @@ public class GameRecorder {
 
     }
 
+    /**
+     * Saves game to file
+     *
+     * @param str - file name
+     * */
     public static void writeStringToFile(String str){
         try {
             //inspiration https://www.w3schools.com/java/java_files_create.asp

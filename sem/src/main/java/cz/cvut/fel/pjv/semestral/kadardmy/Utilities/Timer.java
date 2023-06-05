@@ -29,12 +29,17 @@ public class Timer {
     private long time = 0;
     private long enabledStartTime = 0;
 
-
+    /**
+     * Class for counting time
+     * */
     public Timer(Board.Color color, long time) {
         this.time = time;
         this.color = color;
     }
 
+    /**
+     * Starts timer
+     * */
     public void startTimer(){
         if(!enabled){
             enabled = true;

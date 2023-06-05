@@ -38,8 +38,23 @@ public class GameSettingsWindow extends Stage {
         HBox silver = new HBox();
         HBox buttons = new HBox();
 
+        Button startButton = new Button("Start");
+
         CheckBox aiGolden = new CheckBox();
         CheckBox aiSilver = new CheckBox();
+
+        aiGolden.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                startButton.setDisable(aiGolden.isSelected() && aiSilver.isSelected());
+            }
+        });
+        aiSilver.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                startButton.setDisable(aiGolden.isSelected() && aiSilver.isSelected());
+            }
+        });
 
         Label goldenLabel = new Label("Golden player AI");
         goldenLabel.setFont(Font.font("Impact", 15));
@@ -54,7 +69,6 @@ public class GameSettingsWindow extends Stage {
         silver.setAlignment(Pos.CENTER);
         silver.setSpacing(10);
 
-        Button startButton = new Button("Start");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
