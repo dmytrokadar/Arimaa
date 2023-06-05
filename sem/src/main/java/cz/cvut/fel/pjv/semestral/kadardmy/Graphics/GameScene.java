@@ -146,6 +146,7 @@ public class GameScene extends Scene {
                         timer1.pauseTimer();
                         timer2.startTimer();
                     }
+                    forward.setDisable(true);
                 }
                 moveHolder.appendMove(move);
                 backward.setDisable(false);
@@ -812,7 +813,7 @@ public class GameScene extends Scene {
                     tiles[move.getPosXFrom()][move.getPosYFrom()].removeFigure();
 
                     fw.setPosX(move.getPosXTo());
-                    fw.setPosX(move.getPosYTo());
+                    fw.setPosY(move.getPosYTo());
 
                     tiles[move.getPosXTo()][move.getPosYTo()].setFigureView(fw);
                     board.setCurrentColorMove(move.getColor());
@@ -838,14 +839,14 @@ public class GameScene extends Scene {
                 if(moveHolder.canGoBack()){
                     Move move = moveHolder.getCurrentMove();
                     FigureView fw = tiles[move.getPosXTo()][move.getPosYTo()].getFigureView();
-                    tiles[move.getPosXTo()][move.getPosYTo()].removeFigure();
 
 //                    System.out.println(fw.getPosX() + " " + fw.getPosY());
                     fw.setPosX(move.getPosXFrom());
-                    fw.setPosX(move.getPosYFrom());
+                    fw.setPosY(move.getPosYFrom());
 //                    System.out.println(fw.getPosX() + " " + fw.getPosY());
 
                     tiles[move.getPosXFrom()][move.getPosYFrom()].setFigureView(fw);
+                    tiles[move.getPosXTo()][move.getPosYTo()].removeFigure();
                     board.setCurrentColorMove(move.getColor());
                     board.setMoveCount(move.getMoveCount());
                     whoMoves.setText(board.getCurrentColorMove() + " Moves");
