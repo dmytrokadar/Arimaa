@@ -16,6 +16,11 @@ public class Dog extends Figure{
         strength = STRENGTH.DOG;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/dog_g.png";
+        else
+            imagePath = "Textures/dog_s.png";
     }
 
     /**
@@ -29,6 +34,11 @@ public class Dog extends Figure{
         strength = STRENGTH.DOG;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/dog_g.png";
+        else
+            imagePath = "Textures/dog_s.png";
     }
 
     @Override

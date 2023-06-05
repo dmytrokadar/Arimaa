@@ -16,6 +16,11 @@ public class Rabbit extends Figure{
         strength = STRENGTH.RABBIT;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/rabbit_g.png";
+        else
+            imagePath = "Textures/rabbit_s.png";
     }
 
     /**
@@ -29,6 +34,11 @@ public class Rabbit extends Figure{
         strength = STRENGTH.RABBIT;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/rabbit_g.png";
+        else
+            imagePath = "Textures/rabbit_s.png";
     }
 
     @Override

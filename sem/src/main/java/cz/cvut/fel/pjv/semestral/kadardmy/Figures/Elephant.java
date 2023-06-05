@@ -16,6 +16,11 @@ public class Elephant extends Figure{
         strength = STRENGTH.ELEPHANT;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/elephant_g.png";
+        else
+            imagePath = "Textures/elephant_s.png";
     }
 
     /**
@@ -29,6 +34,11 @@ public class Elephant extends Figure{
         strength = STRENGTH.ELEPHANT;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/elephant_g.png";
+        else
+            imagePath = "Textures/elephant_s.png";
     }
 
     @Override

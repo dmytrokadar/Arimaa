@@ -30,7 +30,7 @@ public class Timer {
     private long enabledStartTime = 0;
 
 
-    public Timer(Board.Color color, int time) {
+    public Timer(Board.Color color, long time) {
         this.time = time;
         this.color = color;
     }

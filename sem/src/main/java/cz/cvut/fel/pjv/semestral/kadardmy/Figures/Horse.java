@@ -16,6 +16,11 @@ public class Horse extends Figure{
         strength = STRENGTH.HORSE;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/horse_g.png";
+        else
+            imagePath = "Textures/horse_s.png";
     }
 
     /**
@@ -29,6 +34,11 @@ public class Horse extends Figure{
         strength = STRENGTH.HORSE;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/horse_g.png";
+        else
+            imagePath = "Textures/horse_s.png";
     }
 
     @Override

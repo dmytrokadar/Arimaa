@@ -39,6 +39,8 @@ public abstract class Figure {
         ELEPHANT
     }
 
+
+    protected String imagePath;
     protected Board.Color color;
     private int positionX;
     private int positionY;
@@ -104,5 +106,9 @@ public abstract class Figure {
 
     public STRENGTH getStrength() {
         return strength;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }

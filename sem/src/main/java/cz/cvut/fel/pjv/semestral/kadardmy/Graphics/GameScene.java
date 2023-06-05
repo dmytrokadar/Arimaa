@@ -45,6 +45,9 @@ public class GameScene extends Scene {
     GameRecorder gameRecorder;
     GridPane boardGP;
 
+    private long timer1Time = SECONDS;
+    private long timer2Time = SECONDS;
+
     boolean rabbitPush = false;
 
     /**
@@ -347,7 +350,8 @@ public class GameScene extends Scene {
         // init figures
         // first phase will be as in original game client - figures are already on board,
         // but you can change their position
-        if(!load){
+        String moves[] = gameRecorder.readFromFileFile();
+        if(!load || moves == null){
             for (int i = 0; i < SIDE_SIZE; i++){
                 for (int j = 0; j < SIDE_SIZE; j++){
                     if(i == SIDE_SIZE - 2){
@@ -425,7 +429,22 @@ public class GameScene extends Scene {
                 }
             }
         } else {
+            char figureL;
+            int posX, posY;
+            Figure f;
 
+            for(String move : moves){
+                figureL = move.charAt(0);
+                posX = GameRecorder.posToInt(Character.getNumericValue(move.charAt(2)));
+                posY = GameRecorder.stringToInt(move.charAt(1));
+
+                f = GameRecorder.stringToFigure(figureL, posX, posY);
+
+                FigureView fw = new FigureView(new Image(f.getImagePath()), posX, posY, f);
+                fw.setOnDragDetected(onDragDetectedFigure);
+                fw.setOnDragDropped(setOnDragDroppedFigure);
+                tiles[posX][posY].setFigureView(fw);
+            }
         }
     }
 
@@ -577,10 +596,10 @@ public class GameScene extends Scene {
         whoMoves.setFont(Font.font("Impact", 30));
         whoMoves.setAlignment(Pos.CENTER_LEFT);
 
-        timer1 = new Timer(Board.Color.GOLD, SECONDS);
+        timer1 = new Timer(Board.Color.GOLD, timer1Time);
         timer1.getProperty().addListener(new UpdateTime(time2));
 
-        timer2 = new Timer(Board.Color.SILVER, SECONDS);
+        timer2 = new Timer(Board.Color.SILVER, timer2Time);
         timer2.getProperty().addListener(new UpdateTime(time1));
 
 

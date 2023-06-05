@@ -95,7 +95,7 @@ public class MainWindow extends Application{
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setSpacing(10);
 
-        buttonBox.getChildren().addAll(newGame, exit);
+        buttonBox.getChildren().addAll(newGame, loadGame, exit);
 
         root.setTop(titlePane);
         root.setCenter(buttonBox);

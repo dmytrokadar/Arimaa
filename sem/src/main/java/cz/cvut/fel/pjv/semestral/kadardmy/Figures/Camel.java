@@ -16,6 +16,11 @@ public class Camel extends Figure{
         strength = STRENGTH.CAMEL;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/camel_g.png";
+        else
+            imagePath = "Textures/camel_s.png";
     }
 
     /**
@@ -29,6 +34,11 @@ public class Camel extends Figure{
         strength = STRENGTH.CAMEL;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/camel_g.png";
+        else
+            imagePath = "Textures/camel_s.png";
     }
 
     @Override

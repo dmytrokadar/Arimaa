@@ -3,6 +3,8 @@ package cz.cvut.fel.pjv.semestral.kadardmy.Figures;
 import cz.cvut.fel.pjv.semestral.kadardmy.Logic.Board;
 
 public class Cat extends Figure{
+
+
     /**
      * Constructor for Cat
      *
@@ -16,6 +18,11 @@ public class Cat extends Figure{
         strength = STRENGTH.CAT;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/cat_g.png";
+        else
+            imagePath = "Textures/cat_s.png";
     }
 
     /**
@@ -29,6 +36,11 @@ public class Cat extends Figure{
         strength = STRENGTH.CAT;
         this.color = color;
         isFrozen = false;
+
+        if(color == Board.Color.GOLD)
+            imagePath = "Textures/cat_g.png";
+        else
+            imagePath = "Textures/cat_s.png";
     }
 
     @Override
