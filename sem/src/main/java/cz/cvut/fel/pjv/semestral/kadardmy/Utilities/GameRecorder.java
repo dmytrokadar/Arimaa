@@ -3,6 +3,7 @@ package cz.cvut.fel.pjv.semestral.kadardmy.Utilities;
 import cz.cvut.fel.pjv.semestral.kadardmy.Figures.*;
 import cz.cvut.fel.pjv.semestral.kadardmy.Graphics.Tile;
 import cz.cvut.fel.pjv.semestral.kadardmy.Logic.Board;
+import cz.cvut.fel.pjv.semestral.kadardmy.Logic.BoardState;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -109,23 +110,56 @@ public class GameRecorder {
 
     }
 
-    public static String[] readFromFileFile(){
+    public static Board.Color stringToColor(String str){
+        if(str.equals("SILVER")){
+            return Board.Color.SILVER;
+        }
+
+        return Board.Color.GOLD;
+    }
+
+    public static BoardState readFromFileFile(){
+        BoardState boardState = null;
         try {
             File newFile = new File("save.txt");
             Scanner scanner = new Scanner(newFile);
 
+            long time1 = 0;
+            long time2 = 0;
+            Board.Color color = Board.Color.GOLD;
+            String[] moves = null;
+
+//            BoardState boardState = null;
+
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();
+                if(line.equals("Time 1:")){
+                    line = scanner.nextLine();
+                    time1 = Long.parseLong(line);
+                }
+
+                if(line.equals("Time 2:")){
+                    line = scanner.nextLine();
+                    time2 = Long.parseLong(line);
+                }
+
+                if(line.equals("Current Move:")){
+                    line = scanner.nextLine();
+                    color = stringToColor(line);
+                }
                 if(line.equals("Position:")){
                     line = scanner.nextLine();
-                    String moves[] = line.split(" ");
+                    moves = line.split(" ");
 
                     logger.info("Loaded from file");
-                    return moves;
                 }
             }
 
-            logger.warning("Nothing to load");
+            boardState = new BoardState(moves, time1, time2, color);
+
+            if(moves == null)
+                logger.warning("Nothing to load");
+            return boardState;
         } catch (IOException e) {
             logger.warning("Cannot read from file " + e);
             e.printStackTrace();

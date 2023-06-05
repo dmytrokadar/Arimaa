@@ -2,6 +2,7 @@ package cz.cvut.fel.pjv.semestral.kadardmy.Graphics;
 
 import cz.cvut.fel.pjv.semestral.kadardmy.Figures.*;
 import cz.cvut.fel.pjv.semestral.kadardmy.Logic.Board;
+import cz.cvut.fel.pjv.semestral.kadardmy.Logic.BoardState;
 import cz.cvut.fel.pjv.semestral.kadardmy.MainWindow.MainWindow;
 import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.GameRecorder;
 import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.Timer;
@@ -63,14 +64,16 @@ public class GameScene extends Scene {
         tiles = new Tile[SIDE_SIZE][SIDE_SIZE];
 
         boardGP = createBoard();
+
+        board = new Board();
+        gameRecorder = new GameRecorder();
+        populateBoard(load);
+
         pane.getChildren().add(boardGP);
         createPane();
 
-        gameRecorder = new GameRecorder();
 
-        populateBoard(load);
 
-        board = new Board();
     }
 
     public Tile getRandomMove(){
@@ -280,8 +283,10 @@ public class GameScene extends Scene {
 
             if ( friendlyFigureNear(fw, board.getCurrentColorMove()) != null && fw.getFigure().getStrength().getValue()
                     >= friendlyFigureNear(fw, board.getCurrentColorMove()).getValue()){
-                return false;
+                return true;
             }
+            else
+                return false;
         }
 
 
@@ -350,8 +355,8 @@ public class GameScene extends Scene {
         // init figures
         // first phase will be as in original game client - figures are already on board,
         // but you can change their position
-        String moves[] = gameRecorder.readFromFileFile();
-        if(!load || moves == null){
+        BoardState boardState = gameRecorder.readFromFileFile();
+        if(!load || boardState == null){
             for (int i = 0; i < SIDE_SIZE; i++){
                 for (int j = 0; j < SIDE_SIZE; j++){
                     if(i == SIDE_SIZE - 2){
@@ -432,6 +437,13 @@ public class GameScene extends Scene {
             char figureL;
             int posX, posY;
             Figure f;
+
+            timer1Time = boardState.getTime1();
+            timer2Time = boardState.getTime2();
+
+            board.setCurrentColorMove(boardState.getColor());
+
+            String[] moves = boardState.getMoves();
 
             for(String move : moves){
                 figureL = move.charAt(0);
@@ -586,20 +598,20 @@ public class GameScene extends Scene {
         gameState = new Label("Editing");
         gameState.setFont(Font.font("Impact", 50));
         gameState.setAlignment(Pos.CENTER);
-        time1 = new Label("10:00");
+        time1 = new Label(String.format("%02d:%02d", (timer1Time / 60) % 60, timer1Time % 60));
         time1.setFont(Font.font("Impact", 30));
         time1.setAlignment(Pos.CENTER_LEFT);
-        time2 = new Label("10:00");
+        time2 = new Label(String.format("%02d:%02d", (timer2Time / 60) % 60, timer2Time % 60));
         time2.setFont(Font.font("Impact", 30));
         time2.setAlignment(Pos.CENTER_LEFT);
-        whoMoves = new Label("GOLD Moves");
+        whoMoves = new Label( board.getCurrentColorMove() + " Moves");
         whoMoves.setFont(Font.font("Impact", 30));
         whoMoves.setAlignment(Pos.CENTER_LEFT);
 
-        timer1 = new Timer(Board.Color.GOLD, timer1Time);
+        timer1 = new Timer(Board.Color.GOLD, timer2Time);
         timer1.getProperty().addListener(new UpdateTime(time2));
 
-        timer2 = new Timer(Board.Color.SILVER, timer2Time);
+        timer2 = new Timer(Board.Color.SILVER, timer1Time);
         timer2.getProperty().addListener(new UpdateTime(time1));
 
 
@@ -614,7 +626,11 @@ public class GameScene extends Scene {
                 board.setPhase(Board.Phase.GAME);
                 gameState.setText("Game");
                 start.setDisable(true);
-                timer1.startTimer();
+                if(board.getCurrentColorMove() == timer1.getColor()){
+                    timer1.startTimer();
+                } else {
+                    timer2.startTimer();
+                }
             }
         });
 

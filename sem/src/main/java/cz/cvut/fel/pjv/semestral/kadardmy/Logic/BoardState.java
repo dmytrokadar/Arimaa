@@ -2,11 +2,11 @@ package cz.cvut.fel.pjv.semestral.kadardmy.Logic;
 
 public class BoardState {
     private String moves[];
-    private int time1;
-    private int time2;
+    private long time1;
+    private long time2;
     private Board.Color color;
 
-    public BoardState(String[] moves, int time1, int time2, Board.Color color) {
+    public BoardState(String[] moves, long time1, long time2, Board.Color color) {
         this.moves = moves;
         this.time1 = time1;
         this.time2 = time2;
@@ -17,11 +17,11 @@ public class BoardState {
         return moves;
     }
 
-    public int getTime1() {
+    public long getTime1() {
         return time1;
     }
 
-    public int getTime2() {
+    public long getTime2() {
         return time2;
     }
 

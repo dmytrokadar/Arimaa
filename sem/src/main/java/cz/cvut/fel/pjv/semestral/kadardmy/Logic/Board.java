@@ -19,7 +19,7 @@ public class Board {
     }
 
     private Phase phase;
-    private int moveCount;
+    private int moveCount = 0;
     private Color currentColorMove = Color.GOLD;
     public static Logger logger = Logger.getLogger(Board.class.getName());
     private GameRecorder gameRecorder;
