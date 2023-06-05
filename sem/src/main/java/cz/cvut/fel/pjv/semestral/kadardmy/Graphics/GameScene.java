@@ -169,7 +169,9 @@ public class GameScene extends Scene {
         return null;
     }
 
-    //get figures with needed color
+    /**
+     * Gets the biggest strengths from nearest figures of needed color
+     * */
     public Figure.STRENGTH friendlyFigureNear(FigureView fw, Board.Color color){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
@@ -207,6 +209,21 @@ public class GameScene extends Scene {
 
         return maxS;
     }
+
+    /**
+     * Returns true if figure can be pulled
+     * */
+    public boolean friendlyFigureNearPull(FigureView fw,
+                                          int posXTile, int posYTile,
+                                          int posXTileDesired, int posYTileDesired, Figure.STRENGTH tileStrength){
+        if(posXTile == posXTileDesired
+                && posYTile == posYTileDesired
+                && tileStrength.getValue() > fw.getFigure().getStrength().getValue())
+            return true;
+
+        return false;
+    }
+
     public boolean checkIsFreesed(FigureView fw){
         Board.Color color = fw.getFigure().getColor();
         if(color == Board.Color.GOLD){
@@ -285,11 +302,20 @@ public class GameScene extends Scene {
             rabbitPush = true;
 
             Figure.STRENGTH tmp = friendlyFigureNear(fw, board.getCurrentColorMove());
-            if(tmp == null)
-                return false;
+            if(tmp == null){
+                Move move = moveHolder.getCurrentMove();
+                if(move == null)
+                    return false;
 
-            if (fw.getFigure().getStrength().getValue() >= tmp.getValue()){
-                return false;
+                if(!friendlyFigureNearPull(fw,
+                        move.getPosXFrom(), move.getPosYFrom(),
+                        tile.getPosX(), tile.getPosY(), move.getFigure().getStrength()))
+                    return false;
+            }
+            else {
+                if (fw.getFigure().getStrength().getValue() >= tmp.getValue()){
+                    return false;
+                }
             }
         }
 
