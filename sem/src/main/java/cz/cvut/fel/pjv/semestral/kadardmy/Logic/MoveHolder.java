@@ -22,12 +22,28 @@ public class MoveHolder {
         return moveArray.size();
     }
 
+    public boolean canGoBack(){
+        if(currentMoveIndex < 0){
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean canGoForward(){
+        if(currentMoveIndex >= getMoveSize() - 1){
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Sets pointer on previous move and returns false. If the move is first, returns false.
      *
      * */
     public boolean goBack(){
-        if(currentMoveIndex == 0)
+        if(currentMoveIndex < 0)
             return false;
 
         currentMoveIndex--;
@@ -47,6 +63,9 @@ public class MoveHolder {
     }
 
     public Move getCurrentMove(){
+        if(currentMoveIndex < 0){
+            return null;
+        }
         return moveArray.get(currentMoveIndex);
     }
 

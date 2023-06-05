@@ -3,7 +3,8 @@ package cz.cvut.fel.pjv.semestral.kadardmy.Graphics;
 import cz.cvut.fel.pjv.semestral.kadardmy.Figures.*;
 import cz.cvut.fel.pjv.semestral.kadardmy.Logic.Board;
 import cz.cvut.fel.pjv.semestral.kadardmy.Logic.BoardState;
-import cz.cvut.fel.pjv.semestral.kadardmy.MainWindow.MainWindow;
+import cz.cvut.fel.pjv.semestral.kadardmy.Logic.Move;
+import cz.cvut.fel.pjv.semestral.kadardmy.Logic.MoveHolder;
 import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.GameRecorder;
 import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.Timer;
 import cz.cvut.fel.pjv.semestral.kadardmy.Utilities.UpdateTime;
@@ -32,19 +33,23 @@ public class GameScene extends Scene {
 
     Tile tiles[][];
 
-    Label time1;
-    Label time2;
-    Label gameState;
-    Label whoMoves;
+    private Label time1;
+    private Label time2;
+    private Label gameState;
+    private Label whoMoves;
 
-    Timer timer1;
-    Timer timer2;
+    private Timer timer1;
+    private Timer timer2;
 
-    Pane pane;
-    BorderPane infoPane;
-    Board board;
-    GameRecorder gameRecorder;
-    GridPane boardGP;
+    private Pane pane;
+    private BorderPane infoPane;
+    private Board board;
+    private MoveHolder moveHolder;
+    private GameRecorder gameRecorder;
+    private GridPane boardGP;
+
+    private Button forward;
+    private Button backward;
 
     private long timer1Time = SECONDS;
     private long timer2Time = SECONDS;
@@ -65,7 +70,9 @@ public class GameScene extends Scene {
 
         boardGP = createBoard();
 
+        moveHolder = new MoveHolder();
         board = new Board();
+
         gameRecorder = new GameRecorder();
         populateBoard(load);
 
@@ -260,10 +267,6 @@ public class GameScene extends Scene {
 //        System.out.println(fw.getFigure().getColor());
         fw.getFigure().setFrozen(checkIsFreesed(fw));
 
-        if(fw.getFigure().isFrozen()){
-            return false;
-        }
-
         if(board.getPhase() == Board.Phase.END){
             timer1.pauseTimer();
             timer2.pauseTimer();
@@ -281,12 +284,17 @@ public class GameScene extends Scene {
         if(fw.getFigure().getColor() != board.getCurrentColorMove()){
             rabbitPush = true;
 
-            if ( friendlyFigureNear(fw, board.getCurrentColorMove()) != null && fw.getFigure().getStrength().getValue()
-                    >= friendlyFigureNear(fw, board.getCurrentColorMove()).getValue()){
-                return true;
-            }
-            else
+            Figure.STRENGTH tmp = friendlyFigureNear(fw, board.getCurrentColorMove());
+            if(tmp == null)
                 return false;
+
+            if (fw.getFigure().getStrength().getValue() >= tmp.getValue()){
+                return false;
+            }
+        }
+
+        if(fw.getFigure().isFrozen() && !rabbitPush){
+            return false;
         }
 
 
@@ -499,6 +507,8 @@ public class GameScene extends Scene {
                             } else {
                                 tileSource.removeFigure();
                             }
+                            Move move = new Move(fw.getFigure(), fw.getPosX(), fw.getPosY(), t.getPosX(), t.getPosY(), board.getCurrentColorMove(), board.getMoveCount());
+
                             t.removeFigure();
                             t.setFigureView(fw);
                             fw.setPosX(t.getPosX());
@@ -514,6 +524,18 @@ public class GameScene extends Scene {
                                     }
                                 }
 
+                                if(moveHolder.canGoForward()){
+                                    moveHolder.removeLastMoves();
+                                    if(board.getCurrentColorMove() == timer1.getColor()){
+                                        timer2.pauseTimer();
+                                        timer1.startTimer();
+                                    } else {
+                                        timer1.pauseTimer();
+                                        timer2.startTimer();
+                                    }
+                                }
+                                moveHolder.appendMove(move);
+                                backward.setDisable(false);
 
                                 Board.Color win = checkForWin();
                                 logger.info(win + "win");
@@ -658,8 +680,66 @@ public class GameScene extends Scene {
             }
         });
 
-        Button forward = new Button("->");
-        Button backward = new Button("<-");
+        forward = new Button("->");
+        forward.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(moveHolder.canGoForward()){
+                    moveHolder.goForward();
+                    Move move = moveHolder.getCurrentMove();
+                    FigureView fw = tiles[move.getPosXFrom()][move.getPosYFrom()].getFigureView();
+                    tiles[move.getPosXFrom()][move.getPosYFrom()].removeFigure();
+
+                    fw.setPosX(move.getPosXTo());
+                    fw.setPosX(move.getPosYTo());
+
+                    tiles[move.getPosXTo()][move.getPosYTo()].setFigureView(fw);
+                    board.setCurrentColorMove(move.getColor());
+                    board.setMoveCount(move.getMoveCount());
+                    whoMoves.setText(board.getCurrentColorMove() + " Moves");
+                    backward.setDisable(false);
+                    if(!moveHolder.canGoForward()){
+                        forward.setDisable(true);
+                    }
+
+                    logger.info("Going forward");
+                } else {
+                    forward.setDisable(true);
+                }
+
+            }
+        });
+        forward.setDisable(true);
+        backward = new Button("<-");
+        backward.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(moveHolder.canGoBack()){
+                    Move move = moveHolder.getCurrentMove();
+                    FigureView fw = tiles[move.getPosXTo()][move.getPosYTo()].getFigureView();
+                    tiles[move.getPosXTo()][move.getPosYTo()].removeFigure();
+
+                    System.out.println(fw.getPosX() + " " + fw.getPosY());
+                    fw.setPosX(move.getPosXFrom());
+                    fw.setPosX(move.getPosYFrom());
+                    System.out.println(fw.getPosX() + " " + fw.getPosY());
+
+                    tiles[move.getPosXFrom()][move.getPosYFrom()].setFigureView(fw);
+                    board.setCurrentColorMove(move.getColor());
+                    board.setMoveCount(move.getMoveCount());
+                    whoMoves.setText(board.getCurrentColorMove() + " Moves");
+                    forward.setDisable(false);
+                    moveHolder.goBack();
+                    if(!moveHolder.canGoBack()){
+                        backward.setDisable(true);
+                    }
+                    logger.info("Going Backward");
+                } else {
+                    backward.setDisable(true);
+                }
+            }
+        });
+        backward.setDisable(true);
         Button saveGame = new Button("Save Game");
         saveGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override

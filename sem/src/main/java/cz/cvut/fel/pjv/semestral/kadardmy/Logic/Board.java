@@ -73,6 +73,10 @@ public class Board {
 //        Rabbit rabbitSilver8 = new Rabbit(Color.SILVER);
     }
 
+    public void setMoveCount(int moveCount) {
+        this.moveCount = moveCount;
+    }
+
     public void increaseMoveCount(){
         moveCount++;
         if(moveCount > 3){
