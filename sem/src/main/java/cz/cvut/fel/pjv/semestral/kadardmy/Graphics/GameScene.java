@@ -23,6 +23,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 import static cz.cvut.fel.pjv.semestral.kadardmy.Logic.Board.logger;
 import static cz.cvut.fel.pjv.semestral.kadardmy.MainWindow.MainWindow.SIDE_SIZE;
 import static cz.cvut.fel.pjv.semestral.kadardmy.MainWindow.MainWindow.TILE_SIZE;
@@ -54,6 +58,12 @@ public class GameScene extends Scene {
     private long timer1Time = SECONDS;
     private long timer2Time = SECONDS;
 
+    private List<FigureView> figuresList;
+    private final static int[][] DIRECTIONS = {{0,1}, {1,0}, {-1, 0}, {0, -1}};
+
+    private boolean aiGOld;
+    private boolean aiSilver;
+
     boolean rabbitPush = false;
 
     /**
@@ -61,12 +71,16 @@ public class GameScene extends Scene {
      *
      * @param load - load from file or new game
      * */
-    public GameScene(boolean load){
+    public GameScene(boolean load, boolean aiGOld, boolean aiSilver){
         super(new Pane());
+        this.aiGOld = aiGOld;
+        this.aiSilver = aiSilver;
 
         pane = (Pane) this.getRoot();
 
         tiles = new Tile[SIDE_SIZE][SIDE_SIZE];
+
+        figuresList = new ArrayList<>();
 
         boardGP = createBoard();
 
@@ -86,6 +100,13 @@ public class GameScene extends Scene {
     public Tile getRandomMove(){
         // TODO вибрати рандомну кількість ходу
         //  вибирати рандомний тайл з фігурков, якшо мош ходити то гуд, якшо нє то інший узяти
+        int moveCount = ThreadLocalRandom.current().nextInt(1, 5);
+        for (int i = 0; i < moveCount; i++){
+            int ind = ThreadLocalRandom.current().nextInt(figuresList.size()) /*% figuresList.size()*/;
+            FigureView fw = figuresList.get(ind);
+
+
+        }
 
         return tiles[0][0];
     }
@@ -280,6 +301,8 @@ public class GameScene extends Scene {
     private boolean validMove(FigureView fw, Tile tile){
         int posX = fw.getPosX();
         int posY = fw.getPosY();
+
+        getRandomMove();
 //
 //        System.out.println(fw.getFigure().getColor());
         fw.getFigure().setFrozen(checkIsFreesed(fw));
@@ -390,80 +413,85 @@ public class GameScene extends Scene {
         // first phase will be as in original game client - figures are already on board,
         // but you can change their position
         BoardState boardState = gameRecorder.readFromFileFile();
+        FigureView fw = null;
         if(!load || boardState == null){
             for (int i = 0; i < SIDE_SIZE; i++){
                 for (int j = 0; j < SIDE_SIZE; j++){
                     if(i == SIDE_SIZE - 2){
-                        FigureView fw = new FigureView(new Image("Textures/rabbit_g.png"), j, i, new Rabbit(Board.Color.GOLD));
+                        fw = new FigureView(new Image("Textures/rabbit_g.png"), j, i, new Rabbit(Board.Color.GOLD));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == 1){
-                        FigureView fw = new FigureView(new Image("Textures/rabbit_s.png"), j, i, new Rabbit(Board.Color.SILVER));
+                        fw = new FigureView(new Image("Textures/rabbit_s.png"), j, i, new Rabbit(Board.Color.SILVER));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == SIDE_SIZE - 1 && (j < 2)){
-                        FigureView fw = new FigureView(new Image("Textures/cat_g.png"), j, i, new Cat(Board.Color.GOLD));
+                        fw = new FigureView(new Image("Textures/cat_g.png"), j, i, new Cat(Board.Color.GOLD));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == 0 && (j < 2)){
-                        FigureView fw = new FigureView(new Image("Textures/cat_s.png"), j, i, new Cat(Board.Color.SILVER));
+                        fw = new FigureView(new Image("Textures/cat_s.png"), j, i, new Cat(Board.Color.SILVER));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == SIDE_SIZE - 1 && (j >= 2 && j < 4)){
-                        FigureView fw = new FigureView(new Image("Textures/dog_g.png"), j, i, new Cat(Board.Color.GOLD));
+                        fw = new FigureView(new Image("Textures/dog_g.png"), j, i, new Cat(Board.Color.GOLD));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == 0 && (j >= 2 && j < 4)){
-                        FigureView fw = new FigureView(new Image("Textures/dog_s.png"), j, i, new Cat(Board.Color.SILVER));
+                        fw = new FigureView(new Image("Textures/dog_s.png"), j, i, new Cat(Board.Color.SILVER));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == SIDE_SIZE - 1 && (j >= 4 && j < 6)){
-                        FigureView fw = new FigureView(new Image("Textures/horse_g.png"), j, i, new Cat(Board.Color.GOLD));
+                        fw = new FigureView(new Image("Textures/horse_g.png"), j, i, new Cat(Board.Color.GOLD));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == 0 && (j >= 4 && j < 6)){
-                        FigureView fw = new FigureView(new Image("Textures/horse_s.png"), j, i, new Cat(Board.Color.SILVER));
+                        fw = new FigureView(new Image("Textures/horse_s.png"), j, i, new Cat(Board.Color.SILVER));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == SIDE_SIZE - 1 && (j == 6)){
-                        FigureView fw = new FigureView(new Image("Textures/camel_g.png"), j, i, new Cat(Board.Color.GOLD));
+                        fw = new FigureView(new Image("Textures/camel_g.png"), j, i, new Cat(Board.Color.GOLD));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == 0 && (j == 6)){
-                        FigureView fw = new FigureView(new Image("Textures/camel_s.png"), j, i, new Cat(Board.Color.SILVER));
+                        fw = new FigureView(new Image("Textures/camel_s.png"), j, i, new Cat(Board.Color.SILVER));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == SIDE_SIZE - 1 && (j == SIDE_SIZE - 1)){
-                        FigureView fw = new FigureView(new Image("Textures/elephant_g.png"), j, i, new Cat(Board.Color.GOLD));
+                        fw = new FigureView(new Image("Textures/elephant_g.png"), j, i, new Cat(Board.Color.GOLD));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
                     }
                     if(i == 0 && (j == SIDE_SIZE - 1)){
-                        FigureView fw = new FigureView(new Image("Textures/elephant_s.png"), j, i, new Cat(Board.Color.SILVER));
+                        fw = new FigureView(new Image("Textures/elephant_s.png"), j, i, new Cat(Board.Color.SILVER));
                         fw.setOnDragDetected(onDragDetectedFigure);
                         fw.setOnDragDropped(setOnDragDroppedFigure);
                         tiles[j][i].setFigureView(fw);
+                    }
+                    if(fw != null){
+                        figuresList.add(fw);
+                        fw = null;
                     }
                 }
             }
@@ -486,10 +514,11 @@ public class GameScene extends Scene {
 
                 f = GameRecorder.stringToFigure(figureL, posX, posY);
 
-                FigureView fw = new FigureView(new Image(f.getImagePath()), posX, posY, f);
+                fw = new FigureView(new Image(f.getImagePath()), posX, posY, f);
                 fw.setOnDragDetected(onDragDetectedFigure);
                 fw.setOnDragDropped(setOnDragDroppedFigure);
                 tiles[posX][posY].setFigureView(fw);
+                figuresList.add(fw);
             }
         }
     }
@@ -745,10 +774,10 @@ public class GameScene extends Scene {
                     FigureView fw = tiles[move.getPosXTo()][move.getPosYTo()].getFigureView();
                     tiles[move.getPosXTo()][move.getPosYTo()].removeFigure();
 
-                    System.out.println(fw.getPosX() + " " + fw.getPosY());
+//                    System.out.println(fw.getPosX() + " " + fw.getPosY());
                     fw.setPosX(move.getPosXFrom());
                     fw.setPosX(move.getPosYFrom());
-                    System.out.println(fw.getPosX() + " " + fw.getPosY());
+//                    System.out.println(fw.getPosX() + " " + fw.getPosY());
 
                     tiles[move.getPosXFrom()][move.getPosYFrom()].setFigureView(fw);
                     board.setCurrentColorMove(move.getColor());

@@ -35,8 +35,20 @@ public class MainWindow extends Application{
     public static final int NUM_OF_TILES = 64;
     public static final int SIDE_SIZE = 8;
 
+    private Stage stage;
+
+    public void startGame(boolean aiG, boolean aiS){
+        Scene scene = new GameScene(false, aiG, aiS);
+        stage.setScene(scene);
+        stage.setTitle("Arimaa");
+        stage.show();
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
+        this.stage = stage;
+        Stage settingsWindow = new GameSettingsWindow(this);
+
         stage.minWidthProperty().bind(stage.heightProperty().multiply(1.5));
         stage.maxWidthProperty().bind(stage.heightProperty().multiply(1.7));
 
@@ -55,22 +67,23 @@ public class MainWindow extends Application{
         newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-//                Scene scene = new GameSettingsWindow();
+                settingsWindow.show();
+                settingsWindow.setTitle("Settings");
 //                stage.setScene(scene);
 //                stage.setTitle("Settings");
 //                stage.show();
 
-                Scene scene = new GameScene(false);
-                stage.setScene(scene);
-                stage.setTitle("Arimaa");
-                stage.show();
+//                Scene scene = new GameScene(false, false, false);
+//                stage.setScene(scene);
+//                stage.setTitle("Arimaa");
+//                stage.show();
             }
         });
 
         loadGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Scene scene = new GameScene(true);
+                Scene scene = new GameScene(true, false, false);
                 stage.setScene(scene);
                 stage.setTitle("Arimaa");
                 stage.show();

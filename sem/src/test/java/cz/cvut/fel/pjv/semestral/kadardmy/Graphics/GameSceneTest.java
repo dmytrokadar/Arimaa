@@ -15,7 +15,7 @@ class GameSceneTest {
 
     @BeforeEach
     void init(){
-        gameScene = new GameScene(false);
+        gameScene = new GameScene(false, false, false);
     }
 
 
